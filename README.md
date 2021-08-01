@@ -1,5 +1,5 @@
 # QForum-Core
-A Lightweight Forum System Core 一个轻量级论坛系统核心
+The Official Core Of QForum-Core QForum-Core 的官方核心
 
 API Part Only 仅API部分
 
