@@ -4,12 +4,15 @@ import cn.jackuxl.qforum.model.User;
 import cn.jackuxl.qforum.serviceimpl.UserServiceImpl;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 public class UserController {
     @Autowired
@@ -17,15 +20,15 @@ public class UserController {
     @RequestMapping(value = "/register", produces = "application/json;charset=UTF-8")
     public String register(User user){
         JSONObject result = new JSONObject();
-        if(getUserNameList().contains(user.getUserName())){
+        if(userService.getUserByUserName(user.getUserName())!=null){
             // 用户名被占用
             result.put("code",403);
-            result.put("msg","username is taken");
+            result.put("error","username_is_taken");
         }
-        else if(getEmailList().contains(user.getEmail())){
+        else if(userService.getUserByEmail(user.getEmail())!=null){
             // 邮箱被占用
             result.put("code",403);
-            result.put("msg","email is taken");
+            result.put("error","email_is_taken");
         }
         else if(userService.register(user)>0){
             result.put("code",200);
@@ -33,7 +36,7 @@ public class UserController {
         }
         else{
             result.put("code",403);
-            result.put("msg","error");
+            result.put("error","unknown");
         }
         return result.toJSONString();
     }
@@ -41,27 +44,18 @@ public class UserController {
     @RequestMapping(value = "/login", produces = "application/json;charset=UTF-8")
     public String login(String userName,String password){
         JSONObject result = new JSONObject();
-        List<User> userList = userService.getUserList();
-        User user = null;
+        User user;
         if(userName.contains("@")){
-            for (User value : userList) {
-                if (value.getEmail().equals(userName)) {
-                    user = value;
-                }
-            }
+            user= userService.getUserByEmail(userName);
             checkPasswordForLogin(password, result, user);
         }
-        else if(getUserNameList().contains(userName)){
-            for (User value : userList) {
-                if (value.getUserName().equals(userName)) {
-                    user = value;
-                }
-            }
+        else if(userService.getUserByUserName(userName)!=null){
+            user= userService.getUserByUserName(userName);
             checkPasswordForLogin(password, result, user);
         }
         else{
             result.put("code",403);
-            result.put("msg","error");
+            result.put("error","no_such_user");
         }
         return result.toJSONString();
     }
@@ -74,40 +68,12 @@ public class UserController {
             }
             else{
                 result.put("code",403);
-                result.put("msg","wrong password");
+                result.put("error","password_mismatch");
             }
         }
         else{
             result.put("code",403);
-            result.put("msg","error");
+            result.put("error","no_such_user");
         }
-    }
-
-    public List<String> getUserNameList(){
-        List<User> userList = userService.getUserList();
-        List<String> result = new ArrayList<>();
-        for (User tmp_user : userList) {
-            result.add(tmp_user.getUserName());
-        }
-        return result;
-    }
-
-    public List<String> getEmailList(){
-        List<User> userList = userService.getUserList();
-        List<String> result = new ArrayList<>();
-        for (User tmp_user : userList) {
-            result.add(tmp_user.getEmail());
-        }
-        return result;
-    }
-
-
-    public List<Integer> getIdList(){
-        List<User> userList = userService.getUserList();
-        List<Integer> result = new ArrayList<>();
-        for (User tmp_user : userList) {
-            result.add(tmp_user.getId());
-        }
-        return result;
     }
 }

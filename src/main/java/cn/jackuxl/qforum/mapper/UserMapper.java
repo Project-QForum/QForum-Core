@@ -16,4 +16,13 @@ public interface UserMapper {
 
     @Select("select * from qf_user order by id desc")
     List<User> getUserList();
+
+    @Select("select * from qf_user where id=#{id};")
+    User getUserById(int id);
+
+    @Select("select * from qf_user where username=#{userName};")
+    User getUserByUserName(String userName);
+
+    @Select("select * from qf_user where email=#{email};")
+    User getUserByEmail(String email);
 }

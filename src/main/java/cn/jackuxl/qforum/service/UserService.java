@@ -9,4 +9,7 @@ import java.util.List;
 public interface UserService {
     int register(User user);
     List<User> getUserList();
+    User getUserById(int id);
+    User getUserByUserName(String userName);
+    User getUserByEmail(String email);
 }
