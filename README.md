@@ -10,7 +10,7 @@ QForum-Core 是 [QForum](https://github.com/JackuXL/QForum) 的官方核心。
 
 #### 搭建论坛
 
-请在运行本项目的同时运行一个前端界面以便和用户交互，您可以在 [项目索引](https://github.com/JackuXL/QForum) 寻找自己喜爱的论坛前端，或使用[官方前端](https://github.com/JackuXL/QForum-MaterialTheme)。
+请在运行本项目的同时运行一个前端界面以便和用户交互，您可以在 [项目索引](https://github.com/JackuXL/QForum) 寻找自己喜爱的论坛前端，或使用 [官方前端](https://github.com/JackuXL/QForum-MaterialTheme)。
 
 #### 开发
 
