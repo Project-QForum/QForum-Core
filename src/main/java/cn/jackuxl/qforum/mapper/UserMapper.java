@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Component
 public interface UserMapper {
-    @Insert("insert into qf_user(username,password,email) values(#{userName},#{password},#{email})")
+    @Insert("insert into qf_user(username,password,email,salt) values(#{userName},#{password},#{email},#{salt})")
     int register(User user);
 
     @Select("select * from qf_user order by id desc")
@@ -25,4 +25,7 @@ public interface UserMapper {
 
     @Select("select * from qf_user where email=#{email};")
     User getUserByEmail(String email);
+
+    @Select("select * from qf_user where session=#{session};")
+    User getUserBySession(String cookie);
 }

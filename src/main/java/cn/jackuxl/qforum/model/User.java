@@ -5,6 +5,8 @@ public class User {
     public String password;
     public int id;
     public String email;
+    public String session;
+    public String salt;
 
     public String getUserName(){
         return userName;
@@ -22,6 +24,14 @@ public class User {
         return id;
     }
 
+    public String getSession(){
+        return session;
+    }
+
+    public String getSalt(){
+        return salt;
+    }
+
     public void setUserName(String userName){
         this.userName = userName;
     }
@@ -32,5 +42,13 @@ public class User {
 
     public void setEmail(String email){
         this.email = email;
+    }
+
+    public void setSession(String session){
+        this.session = session;
+    }
+
+    public void setSalt(String salt){
+        this.salt = salt;
     }
 }
