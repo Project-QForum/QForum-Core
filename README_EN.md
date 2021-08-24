@@ -14,7 +14,7 @@ Please run a front-end interface while running this project to interact with use
 
 #### Develop
 
-We are building the API documentation, you can get the specific API by viewing the source code.
+Please refer to [Wiki](https://github.com/JackuXL/QForum-Core/wiki/%E5%BC%80%E6%94%BE%E6%8E%A5%E5%8F%A3-API)
 
 You can use its API to make forum clients, front-end pages, or other programs.
 
