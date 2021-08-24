@@ -14,7 +14,7 @@ QForum-Core 是 [QForum](https://github.com/JackuXL/QForum) 的官方核心。
 
 #### 开发
 
-我们正在构建 API 文档，您可以通过查看源码来获取到具体 API。
+请参阅 [Wiki](https://github.com/JackuXL/QForum-Core/wiki/%E5%BC%80%E6%94%BE%E6%8E%A5%E5%8F%A3-API)
 
 您可以使用其 API 来制作论坛客户端、前端页面或其他程序。
 
