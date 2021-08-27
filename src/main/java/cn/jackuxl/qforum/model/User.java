@@ -5,50 +5,59 @@ public class User {
     public String password;
     public int id;
     public String email;
-    public String session;
+    public String sessionId;
     public String salt;
+    public String lastLoginIp;
 
-    public String getUserName(){
+    public String getUserName() {
         return userName;
     }
 
-    public String getPassword(){
+    public String getPassword() {
         return password;
     }
 
-    public String getEmail(){
+    public String getEmail() {
         return email;
     }
 
-    public Integer getId(){
+    public Integer getId() {
         return id;
     }
 
-    public String getSession(){
-        return session;
+    public String getSessionId() {
+        return sessionId;
     }
 
-    public String getSalt(){
+    public String getSalt() {
         return salt;
     }
 
-    public void setUserName(String userName){
+    public void setUserName(String userName) {
         this.userName = userName;
     }
 
-    public void setPassword(String password){
+    public void setPassword(String password) {
         this.password = password;
     }
 
-    public void setEmail(String email){
+    public void setEmail(String email) {
         this.email = email;
     }
 
-    public void setSession(String session){
-        this.session = session;
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
-    public void setSalt(String salt){
+    public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    public void setLastLoginIp(String ip) {
+        this.lastLoginIp = ip;
+    }
+
+    public String getLastLoginIp(){
+        return this.lastLoginIp;
     }
 }

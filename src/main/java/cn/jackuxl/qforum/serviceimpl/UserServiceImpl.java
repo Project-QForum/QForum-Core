@@ -19,22 +19,47 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getUserList(){
+    public List<User> getUserList() {
         return userMapper.getUserList();
     }
 
     @Override
-    public User getUserById(int id){
+    public User getUserById(int id) {
         return userMapper.getUserById(id);
     }
 
     @Override
-    public User getUserByUserName(String userName){
+    public User getUserByUserName(String userName) {
         return userMapper.getUserByUserName(userName);
     }
 
     @Override
-    public User getUserByEmail(String email){
+    public User getUserByEmail(String email) {
         return userMapper.getUserByEmail(email);
+    }
+
+    @Override
+    public User getUserBySessionId(String sessionId) {
+        return userMapper.getUserBySessionId(sessionId);
+    }
+
+    @Override
+    public int setUserName(int id, String newName) {
+        return userMapper.setUserName(id, newName);
+    }
+
+    @Override
+    public int setPassword(int id, String newPassword) {
+        return userMapper.setPassword(id, newPassword);
+    }
+
+    @Override
+    public void setSessionId(int id, String newSessionId) {
+        userMapper.setSessionId(id, newSessionId);
+    }
+
+    @Override
+    public void setLastLoginIp(int id, String ip) {
+        userMapper.setLastLoginIp(id, ip);
     }
 }
