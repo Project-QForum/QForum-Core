@@ -2,6 +2,7 @@ package cn.jackuxl.qforum.mapper;
 
 import cn.jackuxl.qforum.model.User;
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Component;
@@ -16,27 +17,27 @@ public interface UserMapper {
     @Select("select * from qf_user order by id desc")
     List<User> getUserList();
 
-    @Select("select * from qf_user where id=#{id};")
+    @Select("select * from qf_user where id=#{param1};")
     User getUserById(int id);
 
-    @Select("select * from qf_user where username=#{userName};")
+    @Select("select * from qf_user where username=#{param1};")
     User getUserByUserName(String userName);
 
-    @Select("select * from qf_user where email=#{email};")
+    @Select("select * from qf_user where email=#{param1};")
     User getUserByEmail(String email);
 
-    @Select("select * from qf_user where sessionId=#{sessionId};")
+    @Select("select * from qf_user where sessionId=#{param1};")
     User getUserBySessionId(String sessionId);
 
-    @Update("update qf_user set username=#{newName} where id=#{id};")
+    @Update("update qf_user set username=#{param2} where id=#{param1};")
     int setUserName(int id, String newName);
 
-    @Update("update qf_user set password=#{newPassword} where id=#{id};")
+    @Update("update qf_user set password=#{param2} where id=#{param1};")
     int setPassword(int id, String newPassword);
 
-    @Update("update qf_user set sessionId=#{newSessionId} where id=#{id};")
+    @Update("update qf_user set sessionId=#{param2} where id=#{param1};")
     void setSessionId(int id, String newSessionId);
 
-    @Update("update qf_user set lastLoginIp=#{ip} where id=#{id};")
+    @Update("update qf_user set lastLoginIp=#{param2} where id=#{param1};")
     void setLastLoginIp(int id, String ip);
 }

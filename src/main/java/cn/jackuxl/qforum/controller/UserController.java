@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,7 +33,7 @@ public class UserController {
         Map<String, String> md5Info = generate(user.getPassword());
         user.setPassword(md5Info.get("result"));
         user.setSalt(md5Info.get("salt"));
-        user.setLastLoginIp(request.getRemoteAddr()+":"+request.getRemotePort());
+        user.setLastLoginIp(getRemoteHost());
         if (userService.getUserByUserName(user.getUserName()) != null) {
             // 用户名被占用
             result.put("code", 403);
@@ -234,7 +235,12 @@ public class UserController {
                 } catch (JSONException e){
                     e.printStackTrace();
                 }
-                userService.setLastLoginIp(user.getId(), request.getRemoteAddr()+":"+request.getRemotePort());
+                try{
+                    userService.setLastLoginIp(user.getId(), getRemoteHost());
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
                 userService.setSessionId(user.getId(), sessionId);
             } else {
                 result.put("code", 403);
@@ -249,5 +255,20 @@ public class UserController {
 
     private String getSessionId() {
         return request.getSession().getId();
+    }
+
+    public String getRemoteHost() {
+
+        String ip = request.getHeader("X-Forwarded-For");
+
+        if (ObjectUtils.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("X-Real-IP");
+        }
+
+        if (ObjectUtils.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+
+        return ip;
     }
 }

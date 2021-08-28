@@ -53,8 +53,8 @@ public class User {
         this.salt = salt;
     }
 
-    public void setLastLoginIp(String ip) {
-        this.lastLoginIp = ip;
+    public void setLastLoginIp(String lastLoginIp) {
+        this.lastLoginIp = lastLoginIp;
     }
 
     public String getLastLoginIp(){

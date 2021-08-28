@@ -25,5 +25,5 @@ public interface UserService {
 
     void setSessionId(int id, String newSessionId);
 
-    void setLastLoginIp(int id, String ip);
+    void setLastLoginIp(int id, String lastLoginIp);
 }

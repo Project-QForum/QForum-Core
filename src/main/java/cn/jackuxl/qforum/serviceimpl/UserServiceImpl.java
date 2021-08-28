@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void setLastLoginIp(int id, String ip) {
-        userMapper.setLastLoginIp(id, ip);
+    public void setLastLoginIp(int id, String lastLoginIp) {
+        userMapper.setLastLoginIp(id, lastLoginIp);
     }
 }
