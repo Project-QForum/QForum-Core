@@ -1,30 +1,30 @@
 # QForum-Core
 
-◀[返回到 QForum 项目索引](https://github.com/JackuXL/QForum)
+◀[Back to the index of the QForum project](https://github.com/JackuXL/QForum)
 
-🌏简体中文 | [English](https://github.com/JackuXL/QForum-Core/blob/master/README_EN.md)
+🌏English | [简体中文](https://github.com/JackuXL/QForum-Core/blob/master/README.zh-CN.md)
 
-QForum-Core 是 [QForum](https://github.com/JackuXL/QForum) 的官方核心。
+QForum-Core is the Official Core of [QForum](https://github.com/JackuXL/QForum).
 
-### 开始使用
+### Start Using
 
-#### 搭建论坛
+#### Build a forum
 
-请在运行本项目的同时运行一个前端界面以便和用户交互，您可以在 [项目索引](https://github.com/JackuXL/QForum) 寻找自己喜爱的论坛前端，或使用 [官方前端](https://github.com/JackuXL/QForum-MaterialTheme)。
+Please run a front-end interface while running this project to interact with users. You can find your favorite forum front-end in [Project Index](https://github.com/JackuXL/QForum), or use [Official Frontend]( https://github.com/JackuXL/QForum-MaterialTheme).
 
-#### 开发
+#### Develop
 
-请参阅 [Wiki](https://github.com/JackuXL/QForum-Core/wiki/%E5%BC%80%E6%94%BE%E6%8E%A5%E5%8F%A3-API)
+Please refer to [Wiki](https://github.com/JackuXL/QForum-Core/wiki/%E5%BC%80%E6%94%BE%E6%8E%A5%E5%8F%A3-API)
 
-您可以使用其 API 来制作论坛客户端、前端页面或其他程序。
+You can use its API to make forum clients, front-end pages, or other programs.
 
-### 特点
+### Features
 
-- 开源且免费，因此您无需担心其安全性。
-- 由官方开发，并长期进行维护。
+- Open source and free, so you don't need to worry about its security.
+- Developed by the government and maintained for a long time.。
 
-### 开发进度
+### Development Progress
 
-- [x] 登录
-- [x] 注册
-- [ ] 其他论坛功能
+- [x] Login
+- [x] Register
+- [ ] Other forum features
