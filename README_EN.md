@@ -2,7 +2,7 @@
 
 ◀[Back to the index of the QForum project](https://github.com/JackuXL/QForum)
 
-🌏[简体中文](https://github.com/JackuXL/QForum-Core/blob/master/README.md) | English
+🌏English | [简体中文](https://github.com/JackuXL/QForum-Core/blob/master/README.zh-CN.md)
 
 QForum-Core is the Official Core of [QForum](https://github.com/JackuXL/QForum).
 
