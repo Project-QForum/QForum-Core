@@ -2,7 +2,7 @@
 
 ◀[返回到 QForum 项目索引](https://github.com/JackuXL/QForum)
 
-🌏[English](https://github.com/JackuXL/QForum-Core/blob/master/README.md) | 简体中文
+🌏[English](https://github.com/JackuXL/QForum-Core/) | 简体中文
 
 QForum-Core 是 [QForum](https://github.com/JackuXL/QForum) 的官方核心。
 
