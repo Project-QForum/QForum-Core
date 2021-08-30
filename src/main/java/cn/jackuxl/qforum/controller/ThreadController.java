@@ -60,6 +60,13 @@ public class ThreadController {
         if (thread!=null) {
             result = JSON.parseObject(JSON.toJSONString(thread));
             result.put("code",200);
+            JSONObject publisher = JSON.parseObject(JSON.toJSONString(userService.getUserById(result.getInteger("publisherId"))));
+            publisher.remove("password");
+            publisher.remove("lastLoginIp");
+            publisher.remove("salt");
+            publisher.remove("sessionId");
+            result.put("publisher",publisher);
+            result.remove("publisherId");
         } else {
             result.put("code", 403);
             result.put("error", "no_such_thread");

@@ -14,8 +14,8 @@ public interface UserMapper {
     @Insert("insert into qf_user(username,password,email,salt,lastLoginIp) values(#{userName},#{password},#{email},#{salt},#{lastLoginIp})")
     int register(User user);
 
-    @Select("select * from qf_user order by id desc")
-    List<User> getUserList();
+    @Select("select * from qf_user order by id asc")
+    List<User> listUser();
 
     @Select("select * from qf_user where id=#{param1};")
     User getUserById(int id);

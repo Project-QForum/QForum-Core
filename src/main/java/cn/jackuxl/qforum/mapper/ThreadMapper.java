@@ -10,4 +10,5 @@ public interface ThreadMapper {
 
     @Select("select * from qf_thread where id=#{param1};")
     Thread getThreadById(int id);
+
 }

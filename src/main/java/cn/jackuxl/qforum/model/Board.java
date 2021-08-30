@@ -3,7 +3,8 @@ package cn.jackuxl.qforum.model;
 public class Board {
     public int id;
     public String name;
-    public int priorityLevel;
+    public int priorityLevel = 10;
+    public String description;
 
     public int getId() {
         return id;
@@ -26,5 +27,11 @@ public class Board {
         this.priorityLevel = priorityLevel;
     }
 
+    public String getDescription() {
+        return description;
+    }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

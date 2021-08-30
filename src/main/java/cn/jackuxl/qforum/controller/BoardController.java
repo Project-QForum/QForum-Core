@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Objects;
 @CrossOrigin
 @RestController
@@ -27,12 +28,9 @@ public class BoardController {
     BoardServiceImpl boardService;
 
     @RequestMapping(value = "/admin/addBoard", produces = "application/json;charset=UTF-8")
-    public String addBoard(String sessionId, String name,@RequestParam(defaultValue = "10") int priorityLevel) {
+    public String addBoard(String sessionId, Board board) {
         JSONObject result = new JSONObject();
         User user = userService.getUserBySessionId(sessionId);
-        Board board = new Board();
-        board.setName(name);
-        board.setPriorityLevel(priorityLevel);
         if (user != null && sessionId != null && user.isAdmin()) {
             if (boardService.addBoard(board) > 0) {
                 result.put("code", 200);
@@ -45,6 +43,18 @@ public class BoardController {
             result.put("code", 403);
             result.put("error", "no_such_user");
         }
+        response.setStatus(result.getInteger("code"));
+        return result.toJSONString();
+    }
+
+    @RequestMapping(value = "/board/list", produces = "application/json;charset=UTF-8")
+    public String listBoards() {
+        JSONObject result = new JSONObject();
+        result.put("code", 200);
+        result.put("msg", "success");
+        List<Board> boards = boardService.listBoards();
+        result.put("boardList",boards);
+        result.put("size",boards.size());
         response.setStatus(result.getInteger("code"));
         return result.toJSONString();
     }
