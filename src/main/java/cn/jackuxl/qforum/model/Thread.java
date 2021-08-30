@@ -8,14 +8,12 @@ public class Thread {
     public int publisherId;
     public String postTime;
     public String content;
+    public int boardId;
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getTitle() {
         return title;
@@ -55,6 +53,14 @@ public class Thread {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public int getBoardId() {
+        return boardId;
+    }
+
+    public void setBoardId(int boardId) {
+        this.boardId = boardId;
     }
 
 }

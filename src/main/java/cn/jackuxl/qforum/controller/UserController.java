@@ -143,6 +143,7 @@ public class UserController {
     }
 
 
+
     /**
      * 加盐MD5
      *
@@ -229,6 +230,8 @@ public class UserController {
             if (verifyPassword(password, user.getPassword(), user.getSalt())) {
                 result.put("code", 200);
                 result.put("msg", "success");
+                result.put("username", user.getUserName());
+                result.put("email",user.getEmail());
                 String sessionId = getSessionId();
                 try{
                     result.put("sessionId", sessionId);

@@ -8,6 +8,7 @@ public class User {
     public String sessionId;
     public String salt;
     public String lastLoginIp;
+    public Boolean admin;
 
     public String getUserName() {
         return userName;
@@ -59,5 +60,13 @@ public class User {
 
     public String getLastLoginIp(){
         return this.lastLoginIp;
+    }
+
+    public Boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
     }
 }
