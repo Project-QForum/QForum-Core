@@ -142,7 +142,20 @@ public class UserController {
         return result.toJSONString();
     }
 
-
+    @RequestMapping(value = "/user/checkLogin", produces = "application/json;charset=UTF-8")
+    public String checkLogin(String sessionId) {
+        JSONObject result = new JSONObject();
+        User user = userService.getUserBySessionId(sessionId);
+        if (user != null) {
+            result.put("code", 200);
+            result.put("error", "success");
+        } else {
+            result.put("code", 403);
+            result.put("error", "no_such_user");
+        }
+        response.setStatus(result.getInteger("code"));
+        return result.toJSONString();
+    }
 
     /**
      * 加盐MD5
