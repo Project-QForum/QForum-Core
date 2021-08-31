@@ -1,8 +1,11 @@
 package cn.jackuxl.qforum.mapper;
 
+import cn.jackuxl.qforum.model.Board;
 import cn.jackuxl.qforum.model.Thread;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 public interface ThreadMapper {
     @Insert("insert into qf_thread(title,type,publisherId,postTime,boardId,content) values(#{title},#{type},#{publisherId},#{postTime},#{boardId},#{content})")
@@ -11,4 +14,6 @@ public interface ThreadMapper {
     @Select("select * from qf_thread where id=#{param1};")
     Thread getThreadById(int id);
 
+    @Select("select * from qf_thread where boardId=#{param1};")
+    List<Thread> listThreads(int boardId);
 }
