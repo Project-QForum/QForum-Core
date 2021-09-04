@@ -4,9 +4,11 @@ import cn.jackuxl.qforum.model.Board;
 import cn.jackuxl.qforum.model.Thread;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public interface ThreadMapper {
     @Insert("insert into qf_thread(title,type,publisherId,postTime,boardId,content) values(#{title},#{type},#{publisherId},#{postTime},#{boardId},#{content})")
     int postThread(Thread thread);

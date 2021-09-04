@@ -5,9 +5,11 @@ import cn.jackuxl.qforum.model.Thread;
 import cn.jackuxl.qforum.model.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public interface BoardMapper {
     @Insert("insert into qf_board(name,description,priorityLevel) values(#{name},#{description},#{priorityLevel})")
     int addBoard(Board board);

@@ -28,11 +28,11 @@ public class ThreadController {
     private HttpServletResponse response;
 
     @RequestMapping(value = "/thread/post", produces = "application/json;charset=UTF-8")
-    public String postThread(String sessionId, Thread thread,int boardId) {
+    public String postThread(String sessionId, Thread thread) {
         JSONObject result = new JSONObject();
         User user = userService.getUserBySessionId(sessionId);
         if (user != null && sessionId != null) {
-            if(boardService.getBoardById(boardId)==null){
+            if(boardService.getBoardById(thread.getBoardId())==null){
                 result.put("code", 403);
                 result.put("error", "no_such_board");
             }
@@ -43,11 +43,10 @@ public class ThreadController {
             else{
                 thread.setPublisherId(user.getId());
                 thread.setPostTime(String.valueOf(System.currentTimeMillis()));
-                thread.setBoardId(boardId);
                 if (threadService.postThread(thread) > 0) {
                     result.put("code", 200);
                     result.put("msg", "success");
-                    List<Thread> threads = threadService.listThreads(boardId);
+                    List<Thread> threads = threadService.listThreads(thread.getBoardId());
                     result.put("id",threads.get(threads.size()-1).getId());
                 } else {
                     result.put("code", 403);

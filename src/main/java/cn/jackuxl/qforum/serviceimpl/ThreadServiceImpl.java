@@ -4,13 +4,14 @@ import cn.jackuxl.qforum.mapper.ThreadMapper;
 import cn.jackuxl.qforum.model.Board;
 import cn.jackuxl.qforum.model.Thread;
 import cn.jackuxl.qforum.service.ThreadService;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Repository
+@Service
 public class ThreadServiceImpl implements ThreadService {
     @Autowired
     private ThreadMapper threadMapper;
