@@ -22,9 +22,3 @@ You can use its API to make forum clients, front-end pages, or other programs.
 
 - Open source and free, so you don't need to worry about its security.
 - Developed by the government and maintained for a long time.。
-
-### Development Progress
-
-- [x] Login
-- [x] Register
-- [ ] Other forum features
