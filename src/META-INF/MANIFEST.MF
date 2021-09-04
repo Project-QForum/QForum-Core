@@ -1,0 +1,31 @@
+Manifest-Version: 1.0
+Main-Class: cn.jackuxl.qforum.QForumApplication
+Class-Path: spring-boot-starter-data-jpa-2.5.4.jar tomcat-embed-el-9.0.5
+ 2.jar spring-context-5.3.9.jar jackson-core-2.12.4.jar spring-data-jpa-
+ 2.5.4.jar logback-core-1.2.5.jar istack-commons-runtime-3.0.12.jar jul-
+ to-slf4j-1.7.32.jar snakeyaml-1.28.jar spring-beans-5.3.9.jar kotlin-st
+ dlib-jdk7-1.5.30.jar jakarta.activation-1.2.2.jar hibernate-core-5.4.32
+ .Final.jar jakarta.transaction-api-1.3.3.jar jakarta.annotation-api-1.3
+ .5.jar tomcat-embed-websocket-9.0.52.jar fastjson-1.2.78.jar spring-cor
+ e-5.3.9.jar HikariCP-4.0.3.jar byte-buddy-1.10.22.jar kotlin-stdlib-com
+ mon-1.5.30.jar kotlin-stdlib-1.5.30.jar spring-boot-starter-aop-2.5.4.j
+ ar jackson-databind-2.12.4.jar jackson-datatype-jsr310-2.12.4.jar tomca
+ t-embed-core-9.0.52.jar logback-classic-1.2.5.jar aspectjweaver-1.9.7.j
+ ar jackson-datatype-jdk8-2.12.4.jar jakarta.persistence-api-2.2.3.jar j
+ akarta.xml.bind-api-2.3.3.jar log4j-to-slf4j-2.14.1.jar mysql-connector
+ -java-8.0.25.jar antlr-2.7.7.jar spring-boot-starter-2.5.4.jar dom4j-2.
+ 1.3.jar spring-aop-5.3.9.jar spring-tx-5.3.9.jar jandex-2.2.3.Final.jar
+  jackson-annotations-2.12.4.jar spring-boot-autoconfigure-2.5.4.jar jav
+ assist-3.27.0-GA.jar jaxb-runtime-2.3.5.jar kotlin-stdlib-jdk8-1.5.30.j
+ ar spring-jdbc-5.3.9.jar mybatis-spring-1.3.2.jar spring-expression-5.3
+ .9.jar spring-jcl-5.3.9.jar kotlin-reflect-1.5.30.jar spring-boot-start
+ er-logging-2.5.4.jar txw2-2.3.5.jar jboss-logging-3.4.2.Final.jar sprin
+ g-data-commons-2.5.4.jar mybatis-spring-boot-autoconfigure-1.3.2.jar lo
+ g4j-api-2.14.1.jar spring-web-5.3.9.jar spring-boot-starter-jdbc-2.5.4.
+ jar spring-boot-2.5.4.jar classmate-1.5.1.jar spring-boot-starter-web-2
+ .5.4.jar spring-aspects-5.3.9.jar jackson-module-parameter-names-2.12.4
+ .jar annotations-13.0.jar mybatis-3.4.6.jar slf4j-api-1.7.32.jar spring
+ -boot-starter-json-2.5.4.jar spring-orm-5.3.9.jar mybatis-spring-boot-s
+ tarter-1.3.2.jar spring-webmvc-5.3.9.jar hibernate-commons-annotations-
+ 5.1.2.Final.jar spring-boot-starter-tomcat-2.5.4.jar
+
