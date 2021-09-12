@@ -5,6 +5,7 @@ import cn.jackuxl.qforum.model.User;
 import cn.jackuxl.qforum.serviceimpl.BoardServiceImpl;
 import cn.jackuxl.qforum.serviceimpl.ThreadServiceImpl;
 import cn.jackuxl.qforum.serviceimpl.UserServiceImpl;
+import cn.jackuxl.qforum.util.InfoUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -68,7 +69,7 @@ public class ThreadController {
         if (thread!=null) {
             result = JSON.parseObject(JSON.toJSONString(thread));
             result.put("code",200);
-            result.put("publisher",getPublicPublisherObject(result.getInteger("publisherId")));
+            result.put("publisher",InfoUtil.INSTANCE.getPublicUserInfo(result.getInteger("publisherId")));
             result.remove("publisherId");
         } else {
             result.put("code", 403);
@@ -87,12 +88,11 @@ public class ThreadController {
             List<Thread> threads = threadService.listThreads(boardId);
             JSONArray tmp = JSON.parseArray(JSON.toJSONString(threads));
             for(int i = 0;i<tmp.size();i++){
-                tmp.getJSONObject(i).put("publisher",getPublicPublisherObject(tmp.getJSONObject(i).getInteger("publisherId")));
+                tmp.getJSONObject(i).put("publisher", InfoUtil.INSTANCE.getPublicUserInfo(tmp.getJSONObject(i).getInteger("publisherId")));
                 tmp.getJSONObject(i).remove("publisherId");
             }
             result.put("threadList",tmp);
             result.put("size",threads.size());
-
         }
         else{
             result.put("code", 403);
@@ -102,12 +102,5 @@ public class ThreadController {
         return result.toJSONString();
     }
 
-    private JSONObject getPublicPublisherObject(int uid){
-        JSONObject publisher = JSON.parseObject(JSON.toJSONString(userService.getUserById(uid)));
-        publisher.remove("password");
-        publisher.remove("lastLoginIp");
-        publisher.remove("salt");
-        publisher.remove("sessionId");
-        return publisher;
-    }
+
 }

@@ -5,6 +5,7 @@ import cn.jackuxl.qforum.model.User
 import cn.jackuxl.qforum.serviceimpl.CommentServiceImpl
 import cn.jackuxl.qforum.serviceimpl.ThreadServiceImpl
 import cn.jackuxl.qforum.serviceimpl.UserServiceImpl
+import cn.jackuxl.qforum.util.InfoUtil
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
 import org.springframework.beans.factory.annotation.Autowired
@@ -66,11 +67,10 @@ class CommentController {
             val comments = commentService.listComments(threadId)
             val tmp = JSON.parseArray(JSON.toJSONString(comments))
             for (i in tmp.indices) {
-                tmp.getJSONObject(i)["publisher"] =
-                    getPublicPublisherObject(tmp.getJSONObject(i).getInteger("publisherId"))
+                tmp.getJSONObject(i)["publisher"] = InfoUtil.getPublicUserInfo(tmp.getJSONObject(i).getInteger("publisherId"))
                 tmp.getJSONObject(i).remove("publisherId")
             }
-            result["threadList"] = tmp
+            result["commentList"] = tmp
             result["size"] = comments.size
         } else {
             result["code"] = 403
@@ -80,12 +80,4 @@ class CommentController {
         return result.toJSONString()
     }
 
-    private fun getPublicPublisherObject(uid: Int): JSONObject? {
-        val publisher = JSON.parseObject(JSON.toJSONString(userService.getUserById(uid)))
-        publisher.remove("password")
-        publisher.remove("lastLoginIp")
-        publisher.remove("salt")
-        publisher.remove("sessionId")
-        return publisher
-    }
 }
