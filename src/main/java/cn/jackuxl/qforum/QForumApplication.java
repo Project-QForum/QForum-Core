@@ -1,5 +1,6 @@
 package cn.jackuxl.qforum;
 
+import cn.jackuxl.qforum.util.InfoUtil;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @MapperScan("cn.jackuxl.qforum.mapper")
 public class QForumApplication {
     public static void main(String[] args) {
+
         SpringApplication.run(QForumApplication.class, args);
     }
 

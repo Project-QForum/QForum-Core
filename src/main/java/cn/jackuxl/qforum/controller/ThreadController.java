@@ -69,6 +69,7 @@ public class ThreadController {
         if (thread!=null) {
             result = JSON.parseObject(JSON.toJSONString(thread));
             result.put("code",200);
+            InfoUtil.INSTANCE.init(userService);
             result.put("publisher",InfoUtil.INSTANCE.getPublicUserInfo(result.getInteger("publisherId")));
             result.remove("publisherId");
         } else {
@@ -88,6 +89,7 @@ public class ThreadController {
             List<Thread> threads = threadService.listThreads(boardId);
             JSONArray tmp = JSON.parseArray(JSON.toJSONString(threads));
             for(int i = 0;i<tmp.size();i++){
+                InfoUtil.INSTANCE.init(userService);
                 tmp.getJSONObject(i).put("publisher", InfoUtil.INSTANCE.getPublicUserInfo(tmp.getJSONObject(i).getInteger("publisherId")));
                 tmp.getJSONObject(i).remove("publisherId");
             }
