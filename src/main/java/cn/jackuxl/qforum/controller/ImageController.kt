@@ -43,7 +43,7 @@ class ImageController {
 
                 result["success"] = 1
                 result["message"] = "上传成功"
-                result["url"] = "http://${request.serverName}:${request.serverPort}/upload/images/${img.name}"
+                result["url"] = "http://${request.serverName}:${request.serverPort}/upload/images/${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}/${img.name}"
             }
         }
         catch (e:Exception){
@@ -62,7 +62,6 @@ class ImageController {
         out.write(file.readBytes())
         out.flush()
         out.close()
-
     }
     fun MultipartFile.isImage():Boolean{
         val suffixs = listOf(".jpg", ".jpeg", ".gif", ".png", ".bmp", ".webp");

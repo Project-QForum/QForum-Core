@@ -2,6 +2,7 @@ package cn.jackuxl.qforum.controller;
 
 import cn.jackuxl.qforum.model.User;
 import cn.jackuxl.qforum.serviceimpl.UserServiceImpl;
+import cn.jackuxl.qforum.util.InfoUtil;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,7 +149,24 @@ public class UserController {
         User user = userService.getUserBySessionId(sessionId);
         if (user != null) {
             result.put("code", 200);
-            result.put("error", "success");
+            result.put("msg", "success");
+        } else {
+            result.put("code", 403);
+            result.put("error", "no_such_user");
+        }
+        response.setStatus(result.getInteger("code"));
+        return result.toJSONString();
+    }
+
+    @RequestMapping(value = "/user/getProfile", produces = "application/json;charset=UTF-8")
+    public String getProfile(int id) {
+        JSONObject result = new JSONObject();
+        User user = userService.getUserById(id);
+        if (user != null) {
+            result.put("code", 200);
+            result.put("msg", "success");
+            InfoUtil.INSTANCE.init(userService);
+            result.put("profile", InfoUtil.INSTANCE.getPublicUserInfo(id));
         } else {
             result.put("code", 403);
             result.put("error", "no_such_user");
@@ -243,21 +261,17 @@ public class UserController {
             if (verifyPassword(password, user.getPassword(), user.getSalt())) {
                 result.put("code", 200);
                 result.put("msg", "success");
-                result.put("username", user.getUserName());
-                result.put("email",user.getEmail());
-                String sessionId = getSessionId();
-                try{
-                    result.put("sessionId", sessionId);
-                } catch (JSONException e){
-                    e.printStackTrace();
-                }
+                InfoUtil.INSTANCE.init(userService);
+                JSONObject profile = InfoUtil.INSTANCE.getPublicUserInfo(user.getId());
+                profile.put("sessionId",getSessionId());
+                result.put("profile", profile);
                 try{
                     userService.setLastLoginIp(user.getId(), getRemoteHost());
                 }
                 catch (Exception e){
                     e.printStackTrace();
                 }
-                userService.setSessionId(user.getId(), sessionId);
+                userService.setSessionId(user.getId(), getSessionId());
             } else {
                 result.put("code", 403);
                 result.put("error", "password_mismatch");
