@@ -1,12 +1,12 @@
 package cn.jackuxl.qforum.serviceimpl;
 
 import cn.jackuxl.qforum.mapper.ThreadMapper;
-import cn.jackuxl.qforum.model.Board;
 import cn.jackuxl.qforum.model.Thread;
 import cn.jackuxl.qforum.service.ThreadService;
-import org.apache.ibatis.annotations.Select;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,5 +29,28 @@ public class ThreadServiceImpl implements ThreadService {
     @Override
     public List<Thread> listThreads(int boardId){
         return threadMapper.listThreads(boardId);
+    }
+
+    @Override
+    public int likeThread(int tid, int uid) {
+        JSONArray likeList = JSON.parseArray(threadMapper.getThreadById(tid).getLikeList());
+        for(int i = 0;i<likeList.size();i++){
+            if(likeList.getInteger(i)==uid){
+                return 0;
+            }
+        }
+        likeList.add(uid);
+        return threadMapper.updateLikeList(tid,likeList.toJSONString());
+    }
+
+    @Override
+    public int disLikeThread(int tid, int uid) {
+        JSONArray likeList = JSON.parseArray(threadMapper.getThreadById(tid).getLikeList());
+        for(int i = 0;i<likeList.size();i++){
+            if(likeList.getInteger(i)==uid){
+                likeList.remove(i);
+            }
+        }
+        return threadMapper.updateLikeList(tid,likeList.toJSONString());
     }
 }

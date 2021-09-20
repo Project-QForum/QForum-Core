@@ -4,6 +4,7 @@ import cn.jackuxl.qforum.model.Board;
 import cn.jackuxl.qforum.model.Thread;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,4 +19,7 @@ public interface ThreadMapper {
 
     @Select("select * from qf_thread where boardId=#{param1};")
     List<Thread> listThreads(int boardId);
+
+    @Update("update qf_thread set likeList=#{param2} where id=#{param1};")
+    int updateLikeList(int tid,String newLikeList);
 }

@@ -10,6 +10,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -104,5 +106,37 @@ public class ThreadController {
         return result.toJSONString();
     }
 
+    final int LIKE = 0,DISLIKE=1;
+    @RequestMapping(value = "/thread/like", produces = "application/json;charset=UTF-8")
+    public String likeThread(@NonNull int type, @NonNull int tid,@NonNull String sessionId){
+        JSONObject result = new JSONObject();
+        User user = userService.getUserBySessionId(sessionId);
+        if (user != null) {
+            result.put("code", 200);
+            result.put("msg", "success");
+            switch (type){
+                case LIKE:
+                    threadService.likeThread(tid,user.getId());
+                    result.put("code", 200);
+                    result.put("msg", "success");
+                    break;
+                case DISLIKE:
+                    threadService.disLikeThread(tid,user.getId());
+                    result.put("code", 200);
+                    result.put("msg", "success");
+                    break;
+                default:
+                    result.put("code", 403);
+                    result.put("msg", "error_type");
+                    break;
+            }
+        }
+        else {
+            result.put("code", 403);
+            result.put("error", "no_such_user");
+        }
+        response.setStatus(result.getInteger("code"));
+        return result.toJSONString();
+    }
 
 }

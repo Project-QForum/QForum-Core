@@ -1,14 +1,16 @@
 package cn.jackuxl.qforum.model;
 
+import java.util.List;
+
 public class Thread {
     public int id;
     public String title;
     public int type;
-    public final int TYPE_NORMAL = 0;
     public int publisherId;
     public String postTime;
     public String content;
     public int boardId;
+    public String likeList;
 
     public int getId() {
         return id;
@@ -63,4 +65,11 @@ public class Thread {
         this.boardId = boardId;
     }
 
+    public String  getLikeList() {
+        return likeList;
+    }
+
+    public void setLikeList(String likeList) {
+        this.likeList = likeList;
+    }
 }
