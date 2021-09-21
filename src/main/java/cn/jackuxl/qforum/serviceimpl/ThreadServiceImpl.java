@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ThreadServiceImpl implements ThreadService {
@@ -28,7 +29,14 @@ public class ThreadServiceImpl implements ThreadService {
 
     @Override
     public List<Thread> listThreads(int boardId){
-        return threadMapper.listThreads(boardId);
+        List<Thread> threads = threadMapper.listThreads(boardId);
+        for (Thread thread : threads) {
+            if (Objects.equals(thread.getLikeList(), "null") || thread.getLikeList() == null) {
+                threadMapper.updateLikeList(thread.getId(), "[]");
+                thread.setLikeList("[]");
+            }
+        }
+        return threads;
     }
 
     @Override

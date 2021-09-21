@@ -66,7 +66,7 @@ public class Thread {
     }
 
     public String  getLikeList() {
-        return likeList;
+        return likeList==null?"[]":likeList;
     }
 
     public void setLikeList(String likeList) {

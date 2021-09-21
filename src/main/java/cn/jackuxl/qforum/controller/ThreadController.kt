@@ -71,6 +71,9 @@ class ThreadController {
             InfoUtil.init(userService)
             result["publisher"] = InfoUtil.getPublicUserInfo(result.getInteger("publisherId"))
             result.remove("publisherId")
+            if(result["likeList"]==null||result["likeList"]=="null"){
+                result["likeList"] = "[]"
+            }
         } else {
             result["code"] = 403
             result["error"] = "no_such_thread"
@@ -91,11 +94,6 @@ class ThreadController {
                 InfoUtil.init(userService)
                 tmp.getJSONObject(i)["publisher"] = InfoUtil.getPublicUserInfo(tmp.getJSONObject(i).getInteger("publisherId"))
                 tmp.getJSONObject(i).remove("publisherId")
-                result["likeList"].apply {
-                    if(this==null){
-                        result["likeList"] = "[]"
-                    }
-                }
             }
             result["threadList"] = tmp
             result["size"] = threads.size

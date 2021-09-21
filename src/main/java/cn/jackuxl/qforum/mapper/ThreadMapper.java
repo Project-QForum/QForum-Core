@@ -11,7 +11,7 @@ import java.util.List;
 
 @Component
 public interface ThreadMapper {
-    @Insert("insert into qf_thread(title,type,publisherId,postTime,boardId,content) values(#{title},#{type},#{publisherId},#{postTime},#{boardId},#{content})")
+    @Insert("insert into qf_thread(title,type,publisherId,postTime,boardId,content,likeList) values(#{title},#{type},#{publisherId},#{postTime},#{boardId},#{content},#{likeList})")
     int postThread(Thread thread);
 
     @Select("select * from qf_thread where id=#{param1};")
