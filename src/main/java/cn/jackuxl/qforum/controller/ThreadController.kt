@@ -28,15 +28,16 @@ class ThreadController {
 
     @Autowired
     lateinit var response: HttpServletResponse
+
     @RequestMapping(value = ["/thread/post"], produces = ["application/json;charset=UTF-8"])
     fun postThread(sessionId: String?, thread: Thread): String {
         val result = JSONObject()
         val user = userService.getUserBySessionId(sessionId)
         if (user != null && sessionId != null) {
-            if (boardService.getBoardById(thread.getBoardId()) == null) {
+            if (boardService.getBoardById(thread.boardId) == null) {
                 result["code"] = 403
                 result["error"] = "no_such_board"
-            } else if (thread.getTitle().isEmpty()) {
+            } else if (thread.title.isNullOrBlank()) {
                 result["code"] = 403
                 result["error"] = "title_cannot_be_empty"
             } else {
@@ -46,8 +47,8 @@ class ThreadController {
                 if (threadService.postThread(thread) > 0) {
                     result["code"] = 200
                     result["msg"] = "success"
-                    val threads = threadService.listThreads(thread.getBoardId())
-                    result["id"] = threads[threads.size - 1].getId()
+                    val threads = threadService.listThreads(thread.boardId)
+                    result["id"] = threads[threads.size - 1].id
                 } else {
                     result["code"] = 403
                     result["error"] = "unknown"

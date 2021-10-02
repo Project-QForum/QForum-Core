@@ -1,75 +1,10 @@
-package cn.jackuxl.qforum.model;
+package cn.jackuxl.qforum.model
 
-import java.util.List;
+data class Thread(var id: Int =0,var title: String? = null,var type: Int = 0,var publisherId: Int = 0,var postTime: String? = null,var content: String? = null,var boardId: Int = 0,var likeList: String = "[]") {
 
-public class Thread {
-    public int id;
-    public String title;
-    public int type;
-    public int publisherId;
-    public String postTime;
-    public String content;
-    public int boardId;
-    public String likeList;
-
-    public int getId() {
-        return id;
+    constructor() : this(0,null,0,0,null,null,0,"[]") {
     }
 
 
-    public String getTitle() {
-        return title;
-    }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public int getPublisherId() {
-        return publisherId;
-    }
-
-    public void setPublisherId(int publisherId) {
-        this.publisherId = publisherId;
-    }
-
-    public String getPostTime() {
-        return postTime;
-    }
-
-    public void setPostTime(String postTime) {
-        this.postTime = postTime;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public int getBoardId() {
-        return boardId;
-    }
-
-    public void setBoardId(int boardId) {
-        this.boardId = boardId;
-    }
-
-    public String  getLikeList() {
-        return likeList==null?"[]":likeList;
-    }
-
-    public void setLikeList(String likeList) {
-        this.likeList = likeList;
-    }
 }
