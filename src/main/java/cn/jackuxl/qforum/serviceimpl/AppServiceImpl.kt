@@ -14,8 +14,16 @@ class AppServiceImpl : AppService {
         return appMapper.postApp(app)
     }
 
-    override fun getAppById(id: Int): App {
+    override fun getAppById(id: Int): App? {
         return appMapper.getAppById(id)
+    }
+
+    override fun getAppByPackageName(packageName: String): App? {
+        return appMapper.getAppByPackageName(packageName)
+    }
+
+    override fun getAppsByTag(tagId:Int): List<App> {
+        return appMapper.getAppsByTag(tagId)
     }
 
     override fun listApps(): List<App> {
