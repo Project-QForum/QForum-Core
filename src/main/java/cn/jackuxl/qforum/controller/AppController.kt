@@ -34,9 +34,21 @@ class AppController {
             if (app.name.isNullOrBlank()) {
                 result["code"] = 403
                 result["error"] = "name_cannot_be_empty"
+            }
+            else if(app.packageName==null) {
+                result["code"] = 403
+                result["error"] = "packageName_cannot_be_empty"
+            } else if(tagService.getTagById(app.tagId)==null){
+                result["code"] = 403
+                result["error"] = "no_such_tag"
+            } else if(appService.getAppByPackageName(app.packageName as String)!=null){
+                result["code"] = 403
+                result["error"] = "packageName_already_exists"
             } else if (appService.postApp(app) > 0) {
                 result["code"] = 200
                 result["msg"] = "success"
+                val apps = appService.listApps().reversed()
+                result["packageName"] = apps[apps.size - 1].packageName
             } else {
                 result["code"] = 403
                 result["error"] = "unknown"

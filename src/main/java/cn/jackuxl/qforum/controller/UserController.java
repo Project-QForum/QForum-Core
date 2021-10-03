@@ -39,6 +39,9 @@ public class UserController {
             // 用户名被占用
             result.put("code", 403);
             result.put("error", "username_already_exists");
+        } else if(user.getUserName().contains("@")){
+            result.put("code", 403);
+            result.put("error", "username_cannot_contain_at");
         } else if (userService.getUserByEmail(user.getEmail()) != null) {
             // 邮箱被占用
             result.put("code", 403);
