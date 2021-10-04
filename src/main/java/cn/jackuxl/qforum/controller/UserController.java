@@ -5,6 +5,7 @@ import cn.jackuxl.qforum.serviceimpl.UserServiceImpl;
 import cn.jackuxl.qforum.util.InfoUtil;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import kotlin.jvm.internal.Intrinsics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.ObjectUtils;
@@ -98,7 +99,7 @@ public class UserController {
     public String setUserName(String sessionId, String newName) {
         JSONObject result = new JSONObject();
         User user = userService.getUserBySessionId(sessionId);
-        if (userService.getUserByUserName(newName) == null) {
+        if (userService.getUserByUserName(newName) != null) {
             // 用户名被占用
             result.put("code", 403);
             result.put("error", "username_already_exists");
@@ -118,15 +119,56 @@ public class UserController {
         return result.toJSONString();
     }
 
+    @RequestMapping(value = "/user/setIntroduction", produces = "application/json;charset=UTF-8")
+    public String setIntroduction(String sessionId, String newIntroduction) {
+        JSONObject result = new JSONObject();
+        User user = userService.getUserBySessionId(sessionId);
+        if (user != null && sessionId != null) {
+            if (userService.setIntroduction(user.getId(),newIntroduction) > 0) {
+                result.put("code", 200);
+                result.put("msg", "success");
+            } else {
+                result.put("code", 403);
+                result.put("error", "unknown");
+            }
+        } else {
+            result.put("code", 403);
+            result.put("error", "no_such_user");
+        }
+        response.setStatus(result.getInteger("code"));
+        return result.toJSONString();
+    }
+
+    @RequestMapping(value = "/user/setAvatarUrl", produces = "application/json;charset=UTF-8")
+    public String setAvatarUrl(String sessionId, String newAvatarUrl) {
+        JSONObject result = new JSONObject();
+        User user = userService.getUserBySessionId(sessionId);
+        if (user != null && sessionId != null) {
+            if (userService.setAvatarUrl(user.getId(),newAvatarUrl) > 0) {
+                result.put("code", 200);
+                result.put("msg", "success");
+            } else {
+                result.put("code", 403);
+                result.put("error", "unknown");
+            }
+        } else {
+            result.put("code", 403);
+            result.put("error", "no_such_user");
+        }
+        response.setStatus(result.getInteger("code"));
+        return result.toJSONString();
+    }
+
     @RequestMapping(value = "/user/setPassword", produces = "application/json;charset=UTF-8")
     public String setPassword(String sessionId, String oldPassword, String newPassword, Boolean md5) {
         JSONObject result = new JSONObject();
         User user = userService.getUserBySessionId(sessionId);
         if (user != null && sessionId != null) {
-            if (Objects.equals(user.getPassword(), oldPassword)) {
-                if (md5 == null || !md5) {
-                    newPassword = DigestUtils.md5DigestAsHex(newPassword.getBytes());
-                }
+            if (md5 == null || !md5) {
+                newPassword = DigestUtils.md5DigestAsHex(newPassword.getBytes());
+                oldPassword = DigestUtils.md5DigestAsHex(oldPassword.getBytes());
+            }
+            if (verifyPassword(oldPassword,user.getPassword(),user.getSalt())) {
                 newPassword = generate(newPassword, user.getSalt());
                 if (userService.setPassword(user.getId(), newPassword) > 0) {
                     result.put("code", 200);
@@ -136,6 +178,7 @@ public class UserController {
                     result.put("error", "unknown");
                 }
             } else {
+                result.put("code", 403);
                 result.put("error", "password_mismatch");
             }
         } else {
@@ -162,14 +205,20 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user/getProfile", produces = "application/json;charset=UTF-8")
-    public String getProfile(int id) {
+    public String getProfile(Integer id,String userName) {
         JSONObject result = new JSONObject();
-        User user = userService.getUserById(id);
+        User user = null;
+        if(id!=null){
+            user = userService.getUserById(id);
+        }
+        else if(userName!=null){
+            user = userService.getUserByUserName(userName);
+        }
         if (user != null) {
             result.put("code", 200);
             result.put("msg", "success");
             InfoUtil.INSTANCE.init(userService);
-            result.put("profile", InfoUtil.INSTANCE.getPublicUserInfo(id));
+            result.put("profile", InfoUtil.INSTANCE.removeConfidentialInfo(user));
         } else {
             result.put("code", 403);
             result.put("error", "no_such_user");

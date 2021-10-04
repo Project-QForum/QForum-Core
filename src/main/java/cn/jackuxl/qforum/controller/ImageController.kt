@@ -51,7 +51,6 @@ class ImageController {
             result["error"] = e.message
             e.printStackTrace()
         }
-
         return result.toJSONString()
     }
     @RequestMapping(value = ["/upload/images/{year}/{month}/{day}/{fileName}"],produces = ["image/png"])

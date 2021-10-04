@@ -23,6 +23,10 @@ public interface UserService {
 
     int setPassword(int id, String newPassword);
 
+    int setIntroduction(int id, String newIntroduction);
+
+    int setAvatarUrl(int id, String newAvatarUrl);
+
     void setSessionId(int id, String newSessionId);
 
     void setLastLoginIp(int id, String lastLoginIp);

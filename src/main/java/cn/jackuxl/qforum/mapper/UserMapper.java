@@ -11,7 +11,7 @@ import java.util.List;
 
 @Component
 public interface UserMapper {
-    @Insert("insert into qf_user(username,password,email,salt,lastLoginIp) values(#{userName},#{password},#{email},#{salt},#{lastLoginIp})")
+    @Insert("insert into qf_user(username,password,email,salt,lastLoginIp,introduction,avatarUrl) values(#{userName},#{password},#{email},#{salt},#{lastLoginIp},#{introduction},#{avatarUrl})")
     int register(User user);
 
     @Select("select * from qf_user order by id asc")
@@ -37,6 +37,12 @@ public interface UserMapper {
 
     @Update("update qf_user set sessionId=#{param2} where id=#{param1};")
     void setSessionId(int id, String newSessionId);
+
+    @Update("update qf_user set introduction=#{param2} where id=#{param1};")
+    int setIntroduction(int id, String newIntroduction);
+
+    @Update("update qf_user set avatarUrl=#{param2} where id=#{param1};")
+    int setAvatarUrl(int id, String newAvatarUrl);
 
     @Update("update qf_user set lastLoginIp=#{param2} where id=#{param1};")
     void setLastLoginIp(int id, String ip);

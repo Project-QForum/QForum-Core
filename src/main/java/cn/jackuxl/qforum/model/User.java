@@ -1,14 +1,18 @@
 package cn.jackuxl.qforum.model;
 
 public class User {
-    public String userName;
-    public String password;
-    public int id;
-    public String email;
-    public String sessionId;
-    public String salt;
-    public String lastLoginIp;
-    public Boolean admin;
+    private String userName;
+    private String password;
+    private int id;
+    private String email;
+    private String sessionId;
+    private String salt;
+    private String lastLoginIp;
+    private Boolean admin;
+    private String official;
+    private String introduction = "这个人很懒，什么都没留下。";
+    private String avatarUrl;
+    
 
     public String getUserName() {
         return userName;
@@ -20,6 +24,10 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getOfficial() {
+        return official;
     }
 
     public Integer getId() {
@@ -34,6 +42,18 @@ public class User {
         return salt;
     }
 
+    public String getIntroduction(){
+        return introduction;
+    }
+
+    public String getLastLoginIp(){
+        return this.lastLoginIp;
+    }
+
+    public String getAvatarUrl(){
+        return this.avatarUrl;
+    }
+
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -44,6 +64,10 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setOfficial(String official) {
+        this.official = official;
     }
 
     public void setSessionId(String sessionId) {
@@ -58,9 +82,9 @@ public class User {
         this.lastLoginIp = lastLoginIp;
     }
 
-    public String getLastLoginIp(){
-        return this.lastLoginIp;
-    }
+    public void setIntroduction(String introduction){this.introduction = introduction;}
+
+    public void setAvatarUrl(String avatarUrl){this.avatarUrl = avatarUrl;}
 
     public Boolean isAdmin() {
         return admin;
@@ -69,4 +93,6 @@ public class User {
     public void setAdmin(Boolean admin) {
         this.admin = admin;
     }
+
+
 }

@@ -36,6 +36,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public int setIntroduction(int id, String newIntroduction) {
+        return userMapper.setIntroduction(id,newIntroduction);
+    }
+
+    @Override
+    public int setAvatarUrl(int id, String newAvatarUrl) {
+        return userMapper.setAvatarUrl(id,newAvatarUrl);
+    }
+
+    @Override
     public User getUserByEmail(String email) {
         return userMapper.getUserByEmail(email);
     }

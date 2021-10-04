@@ -13,7 +13,7 @@ object InfoUtil {
     fun getPublicUserInfo(uid:Int):JSONObject{
         return JSON.parseObject(JSON.toJSONString(removeConfidentialInfo(userService?.getUserById(uid) as User)))
     }
-    private fun removeConfidentialInfo(user: User): User {
+    fun removeConfidentialInfo(user: User): User {
         user.apply {
             password = null
             lastLoginIp = null
