@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse
 
 @CrossOrigin
 @RestController
-class ImageController {
+class FileController {
     @Autowired
     lateinit var userService: UserServiceImpl
     @Autowired
@@ -52,6 +52,44 @@ class ImageController {
             e.printStackTrace()
         }
         return result.toJSONString()
+    }
+    @RequestMapping(value = ["/apk/upload"], produces = ["application/json;charset=UTF-8"])
+    fun uploadAPK(file:MultipartFile): String? {
+        val result = JSONObject()
+        try{
+            if(file.name.endsWith(".apk")){
+                result["code"] = 403
+                result["error"] = "suffix_not_allowed"
+                response.status = 403
+            }
+            else {
+                val rootPath = File("upload/apks/${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}")
+                rootPath.mkdirs()
+
+                val img = File("${rootPath.absolutePath}/${System.currentTimeMillis()}_${UUID.randomUUID()}.apk")
+                img.createNewFile()
+                file.transferTo(File(img.absolutePath))
+
+                result["success"] = 1
+                result["message"] = "上传成功"
+                result["url"] = "http://${request.serverName}:${request.serverPort}/upload/apks/${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}/${img.name}"
+            }
+        }
+        catch (e:Exception){
+            result["success"] = 0
+            result["error"] = e.message
+            e.printStackTrace()
+        }
+        return result.toJSONString()
+    }
+    @RequestMapping(value = ["/upload/apks/{year}/{month}/{day}/{fileName}"],produces = ["application/vnd.android.package-archive"])
+    fun getAPK(@PathVariable year:String,@PathVariable month:String,@PathVariable day:String,@PathVariable fileName:String){
+        val file = File("upload/apks/${year}/${month}/${day}/${fileName}")
+        response.contentType = "application/vnd.android.package-archive"
+        val out: OutputStream = response.outputStream
+        out.write(file.readBytes())
+        out.flush()
+        out.close()
     }
     @RequestMapping(value = ["/upload/images/{year}/{month}/{day}/{fileName}"],produces = ["image/png"])
     fun getImage(@PathVariable year:String,@PathVariable month:String,@PathVariable day:String,@PathVariable fileName:String){
