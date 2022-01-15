@@ -1,7 +1,7 @@
 package cn.jackuxl.qforum.controller
 
 import cn.jackuxl.qforum.entity.App
-import cn.jackuxl.qforum.model.Result
+import cn.jackuxl.qforum.model.ResultEntity
 import cn.jackuxl.qforum.serviceimpl.AppServiceImpl
 import cn.jackuxl.qforum.serviceimpl.TagServiceImpl
 import cn.jackuxl.qforum.serviceimpl.UserServiceImpl
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.io.Serializable
 import javax.servlet.http.HttpServletResponse
 
 @CrossOrigin
@@ -62,9 +61,9 @@ class AppController {
         return result.toJSONString()
     }
     @RequestMapping(value = ["/app/test"], produces = ["application/json;charset=UTF-8"])
-    fun test():Result<String>{
-        System.out.println(Result.ok("success","success").toString())
-        return Result.ok("success","success")
+    fun test():ResultEntity<String>{
+        System.out.println(ResultEntity.ok("success","success").toString())
+        return ResultEntity.ok("success","success")
     }
     @RequestMapping(value = ["/app/list"], produces = ["application/json;charset=UTF-8"])
     fun listApp(tagId:Int?): String {

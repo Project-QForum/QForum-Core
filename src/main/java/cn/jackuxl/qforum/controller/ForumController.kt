@@ -1,6 +1,5 @@
 package cn.jackuxl.qforum.controller
 
-import cn.jackuxl.qforum.model.Result
 import com.alibaba.fastjson.JSON
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.RequestMapping
