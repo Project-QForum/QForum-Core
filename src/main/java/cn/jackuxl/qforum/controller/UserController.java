@@ -54,7 +54,7 @@ public class UserController {
             result.put("code", 403);
             result.put("error", "unknown");
         }
-        response.setStatus(result.getInteger("code"));
+        
         return result.toJSONString();
     }
 
@@ -75,7 +75,7 @@ public class UserController {
             result.put("code", 403);
             result.put("error", "no_such_user");
         }
-        response.setStatus(result.getInteger("code"));
+        
         return result.toJSONString();
     }
 
@@ -91,7 +91,7 @@ public class UserController {
             result.put("code", 403);
             result.put("error", "no_such_user");
         }
-        response.setStatus(result.getInteger("code"));
+        
         return result.toJSONString();
     }
 
@@ -115,7 +115,7 @@ public class UserController {
             result.put("code", 403);
             result.put("error", "no_such_user");
         }
-        response.setStatus(result.getInteger("code"));
+        
         return result.toJSONString();
     }
 
@@ -135,7 +135,7 @@ public class UserController {
             result.put("code", 403);
             result.put("error", "no_such_user");
         }
-        response.setStatus(result.getInteger("code"));
+        
         return result.toJSONString();
     }
 
@@ -155,7 +155,7 @@ public class UserController {
             result.put("code", 403);
             result.put("error", "no_such_user");
         }
-        response.setStatus(result.getInteger("code"));
+        
         return result.toJSONString();
     }
 
@@ -185,7 +185,7 @@ public class UserController {
             result.put("code", 403);
             result.put("error", "no_such_user");
         }
-        response.setStatus(result.getInteger("code"));
+        
         return result.toJSONString();
     }
 
@@ -200,7 +200,7 @@ public class UserController {
             result.put("code", 403);
             result.put("error", "no_such_user");
         }
-        response.setStatus(result.getInteger("code"));
+        
         return result.toJSONString();
     }
 
@@ -223,7 +223,7 @@ public class UserController {
             result.put("code", 403);
             result.put("error", "no_such_user");
         }
-        response.setStatus(result.getInteger("code"));
+        
         return result.toJSONString();
     }
 

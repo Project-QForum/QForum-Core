@@ -23,9 +23,8 @@ class FileController {
     lateinit var response: HttpServletResponse
     @Autowired
     lateinit var request:HttpServletRequest
-
     @RequestMapping(value = ["/image/upload"], produces = ["application/json;charset=UTF-8"])
-    fun uploadImage(@RequestParam(value = "editormd-image-file", required = false) file:MultipartFile): String? {
+    fun uploadImage(@RequestParam(value = "imageFile", required = false) file:MultipartFile): String? {
         val result = JSONObject()
         try{
             if(file.isImage()){
@@ -41,13 +40,13 @@ class FileController {
                 img.createNewFile()
                 file.transferTo(File(img.absolutePath))
 
-                result["success"] = 1
-                result["message"] = "上传成功"
+                result["code"] = 200
+                result["msg"] = "上传成功"
                 result["url"] = "http://${request.serverName}:${request.serverPort}/upload/images/${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}/${img.name}"
             }
         }
         catch (e:Exception){
-            result["success"] = 0
+            result["code"] = 403
             result["error"] = e.message
             e.printStackTrace()
         }
@@ -60,7 +59,7 @@ class FileController {
             if(file.name.endsWith(".apk")){
                 result["code"] = 403
                 result["error"] = "suffix_not_allowed"
-                response.status = 403
+                
             }
             else {
                 val rootPath = File("upload/apks/${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}")

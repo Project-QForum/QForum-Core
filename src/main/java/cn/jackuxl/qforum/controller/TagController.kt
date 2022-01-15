@@ -39,7 +39,7 @@ class TagController {
             result["code"] = 403
             result["error"] = "no_such_user"
         }
-        response.status = result.getInteger("code")
+       
         return result.toJSONString()
     }
 
@@ -51,7 +51,7 @@ class TagController {
         val tags = tagService.listTags()
         result["tagList"] = tags
         result["size"] = tags.size
-        response.status = result.getInteger("code")
+       
         return result.toJSONString()
     }
 }

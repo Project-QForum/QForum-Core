@@ -57,7 +57,7 @@ class AppController {
             result["code"] = 403
             result["error"] = "no_such_user"
         }
-        response.status = result.getInteger("code")
+       
         return result.toJSONString()
     }
 
@@ -83,7 +83,7 @@ class AppController {
         }
         result["appList"] = tmp
         result["size"] = apps.size
-        response.status = result.getInteger("code")
+       
         return result.toJSONString()
     }
 
@@ -103,7 +103,7 @@ class AppController {
             result["code"] = 403
             result["error"] = "no_such_app"
         }
-        response.status = result.getInteger("code")
+       
         return result.toJSONString()
     }
 }

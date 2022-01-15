@@ -39,7 +39,7 @@ public class BoardController {
             result.put("code", 403);
             result.put("error", "no_such_user");
         }
-        response.setStatus(result.getInteger("code"));
+        
         return result.toJSONString();
     }
 
@@ -51,7 +51,7 @@ public class BoardController {
         List<Board> boards = boardService.listBoards();
         result.put("boardList",boards);
         result.put("size",boards.size());
-        response.setStatus(result.getInteger("code"));
+        
         return result.toJSONString();
     }
 }

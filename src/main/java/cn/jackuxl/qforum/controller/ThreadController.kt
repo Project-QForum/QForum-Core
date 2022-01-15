@@ -58,7 +58,7 @@ class ThreadController {
             result["code"] = 403
             result["error"] = "no_such_user"
         }
-        response.status = result.getInteger("code")
+       
         return result.toJSONString()
     }
 
@@ -81,7 +81,7 @@ class ThreadController {
             result["code"] = 403
             result["error"] = "no_such_thread"
         }
-        response.status = result.getInteger("code")
+       
         return result.toJSONString()
     }
 
@@ -106,7 +106,7 @@ class ThreadController {
             result["code"] = 403
             result["error"] = "no_such_board"
         }
-        response.status = result.getInteger("code")
+       
         return result.toJSONString()
     }
 
@@ -139,7 +139,7 @@ class ThreadController {
             result["code"] = 403
             result["error"] = "no_such_user"
         }
-        response.status = result.getInteger("code")
+       
         return result.toJSONString()
     }
 }
