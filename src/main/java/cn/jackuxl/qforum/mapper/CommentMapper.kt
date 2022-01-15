@@ -1,6 +1,6 @@
 package cn.jackuxl.qforum.mapper
 
-import cn.jackuxl.qforum.model.Comment
+import cn.jackuxl.qforum.entity.Comment
 import org.apache.ibatis.annotations.Insert
 import org.apache.ibatis.annotations.Select
 import org.springframework.stereotype.Component

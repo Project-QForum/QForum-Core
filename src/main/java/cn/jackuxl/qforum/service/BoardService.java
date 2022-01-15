@@ -1,7 +1,6 @@
 package cn.jackuxl.qforum.service;
 
-import cn.jackuxl.qforum.model.Board;
-import cn.jackuxl.qforum.model.Thread;
+import cn.jackuxl.qforum.entity.Board;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

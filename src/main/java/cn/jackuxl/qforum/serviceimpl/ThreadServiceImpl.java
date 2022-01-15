@@ -1,11 +1,10 @@
 package cn.jackuxl.qforum.serviceimpl;
 
 import cn.jackuxl.qforum.mapper.ThreadMapper;
-import cn.jackuxl.qforum.model.Thread;
+import cn.jackuxl.qforum.entity.Thread;
 import cn.jackuxl.qforum.service.ThreadService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

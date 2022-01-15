@@ -1,6 +1,6 @@
 package cn.jackuxl.qforum.controller
 
-import cn.jackuxl.qforum.model.Thread
+import cn.jackuxl.qforum.entity.Thread
 import cn.jackuxl.qforum.util.InfoUtil
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.RestController

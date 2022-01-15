@@ -1,7 +1,7 @@
 package cn.jackuxl.qforum.controller;
 
-import cn.jackuxl.qforum.model.Board;
-import cn.jackuxl.qforum.model.User;
+import cn.jackuxl.qforum.entity.Board;
+import cn.jackuxl.qforum.entity.User;
 import cn.jackuxl.qforum.serviceimpl.BoardServiceImpl;
 import cn.jackuxl.qforum.serviceimpl.UserServiceImpl;
 import com.alibaba.fastjson.JSONObject;

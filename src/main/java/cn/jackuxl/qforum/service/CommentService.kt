@@ -1,6 +1,6 @@
 package cn.jackuxl.qforum.service
 
-import cn.jackuxl.qforum.model.Comment
+import cn.jackuxl.qforum.entity.Comment
 import org.springframework.stereotype.Component
 
 @Component

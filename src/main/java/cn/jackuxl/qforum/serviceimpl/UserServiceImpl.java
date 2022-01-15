@@ -1,13 +1,11 @@
 package cn.jackuxl.qforum.serviceimpl;
 
 import cn.jackuxl.qforum.mapper.UserMapper;
-import cn.jackuxl.qforum.model.User;
+import cn.jackuxl.qforum.entity.User;
 import cn.jackuxl.qforum.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Service

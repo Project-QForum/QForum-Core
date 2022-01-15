@@ -1,6 +1,6 @@
 package cn.jackuxl.qforum.util
 
-import cn.jackuxl.qforum.model.User
+import cn.jackuxl.qforum.entity.User
 import cn.jackuxl.qforum.serviceimpl.UserServiceImpl
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject

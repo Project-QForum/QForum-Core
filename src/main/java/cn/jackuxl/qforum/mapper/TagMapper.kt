@@ -1,7 +1,6 @@
 package cn.jackuxl.qforum.mapper
 
-import cn.jackuxl.qforum.model.Board
-import cn.jackuxl.qforum.model.Tag
+import cn.jackuxl.qforum.entity.Tag
 import org.apache.ibatis.annotations.Insert
 import org.apache.ibatis.annotations.Select
 import org.springframework.stereotype.Component

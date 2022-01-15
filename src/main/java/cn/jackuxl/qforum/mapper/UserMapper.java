@@ -1,8 +1,7 @@
 package cn.jackuxl.qforum.mapper;
 
-import cn.jackuxl.qforum.model.User;
+import cn.jackuxl.qforum.entity.User;
 import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Component;

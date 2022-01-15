@@ -1,11 +1,9 @@
 package cn.jackuxl.qforum.controller;
 
-import cn.jackuxl.qforum.model.User;
+import cn.jackuxl.qforum.entity.User;
 import cn.jackuxl.qforum.serviceimpl.UserServiceImpl;
 import cn.jackuxl.qforum.util.InfoUtil;
-import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
-import kotlin.jvm.internal.Intrinsics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.ObjectUtils;
@@ -54,7 +52,6 @@ public class UserController {
             result.put("code", 403);
             result.put("error", "unknown");
         }
-        
         return result.toJSONString();
     }
 

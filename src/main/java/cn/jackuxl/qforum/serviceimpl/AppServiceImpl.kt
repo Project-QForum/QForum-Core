@@ -1,7 +1,7 @@
 package cn.jackuxl.qforum.serviceimpl
 
 import cn.jackuxl.qforum.mapper.AppMapper
-import cn.jackuxl.qforum.model.App
+import cn.jackuxl.qforum.entity.App
 import cn.jackuxl.qforum.service.AppService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

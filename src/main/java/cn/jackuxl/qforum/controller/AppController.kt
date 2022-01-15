@@ -1,6 +1,7 @@
 package cn.jackuxl.qforum.controller
 
-import cn.jackuxl.qforum.model.App
+import cn.jackuxl.qforum.entity.App
+import cn.jackuxl.qforum.model.Result
 import cn.jackuxl.qforum.serviceimpl.AppServiceImpl
 import cn.jackuxl.qforum.serviceimpl.TagServiceImpl
 import cn.jackuxl.qforum.serviceimpl.UserServiceImpl
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.io.Serializable
 import javax.servlet.http.HttpServletResponse
 
 @CrossOrigin
@@ -30,7 +32,7 @@ class AppController {
         val user = userService.getUserBySessionId(sessionId)
         if (user != null && sessionId != null) {
             app.postTime = System.currentTimeMillis().toString()
-            app.publisherId = user.getId()
+            app.publisherId = user.id
             if (app.name.isNullOrBlank()) {
                 result["code"] = 403
                 result["error"] = "name_cannot_be_empty"
@@ -57,10 +59,12 @@ class AppController {
             result["code"] = 403
             result["error"] = "no_such_user"
         }
-       
         return result.toJSONString()
     }
-
+    @RequestMapping(value = ["/app/test"], produces = ["application/json;charset=UTF-8"])
+    fun test():Result<String>{
+        return Result.ok("success","success")
+    }
     @RequestMapping(value = ["/app/list"], produces = ["application/json;charset=UTF-8"])
     fun listApp(tagId:Int?): String {
         val result = JSONObject()

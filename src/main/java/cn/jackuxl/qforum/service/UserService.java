@@ -1,6 +1,6 @@
 package cn.jackuxl.qforum.service;
 
-import cn.jackuxl.qforum.model.User;
+import cn.jackuxl.qforum.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package cn.jackuxl.qforum.model;
+package cn.jackuxl.qforum.entity;
 
 public class Board {
     public int id;

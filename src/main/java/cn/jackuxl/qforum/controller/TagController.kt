@@ -5,10 +5,8 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.beans.factory.annotation.Autowired
 import cn.jackuxl.qforum.serviceimpl.UserServiceImpl
 import javax.servlet.http.HttpServletResponse
-import cn.jackuxl.qforum.serviceimpl.BoardServiceImpl
 import org.springframework.web.bind.annotation.RequestMapping
-import cn.jackuxl.qforum.model.Board
-import cn.jackuxl.qforum.model.Tag
+import cn.jackuxl.qforum.entity.Tag
 import cn.jackuxl.qforum.serviceimpl.TagServiceImpl
 import com.alibaba.fastjson.JSONObject
 

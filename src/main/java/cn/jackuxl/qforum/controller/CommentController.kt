@@ -1,7 +1,7 @@
 package cn.jackuxl.qforum.controller
 
-import cn.jackuxl.qforum.model.Comment
-import cn.jackuxl.qforum.model.User
+import cn.jackuxl.qforum.entity.Comment
+import cn.jackuxl.qforum.entity.User
 import cn.jackuxl.qforum.serviceimpl.CommentServiceImpl
 import cn.jackuxl.qforum.serviceimpl.ThreadServiceImpl
 import cn.jackuxl.qforum.serviceimpl.UserServiceImpl
