@@ -63,6 +63,7 @@ class AppController {
     }
     @RequestMapping(value = ["/app/test"], produces = ["application/json;charset=UTF-8"])
     fun test():Result<String>{
+        System.out.println(Result.ok("success","success").toString())
         return Result.ok("success","success")
     }
     @RequestMapping(value = ["/app/list"], produces = ["application/json;charset=UTF-8"])

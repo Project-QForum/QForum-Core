@@ -1,16 +1,14 @@
 package cn.jackuxl.qforum.model
 
-import cn.jackuxl.qforum.constants.e.Code
-import java.io.Serializable
 
 /**
  * @author JackuXL
  */
-class Result<T> private constructor() : Serializable {
-    private var code = 0
-    private var message: String? = null
-    private var data: T? = null
+import cn.jackuxl.qforum.constants.e.Code
+import kotlinx.serialization.Serializable
 
+@Serializable
+data class Result<T>(var code : Int = 0, var message: String? = null, var data:T?=null){
     companion object {
         fun <T> ok(): Result<T?> {
             return restResult(null, Code.SUCCESS.value(), null)

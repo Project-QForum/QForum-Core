@@ -25,6 +25,7 @@ class TagController {
     fun addBoard(sessionId: String?, tag: Tag): String {
         val result = JSONObject()
         val user = userService.getUserBySessionId(sessionId)
+
         if (user != null && sessionId != null && user.isAdmin) {
             if (tagService.addTag(tag) > 0) {
                 result["code"] = 200
