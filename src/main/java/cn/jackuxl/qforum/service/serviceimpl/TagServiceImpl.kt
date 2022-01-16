@@ -1,9 +1,9 @@
 package cn.jackuxl.qforum.service.serviceimpl
 
+import cn.jackuxl.qforum.entity.Tag
+import cn.jackuxl.qforum.mapper.TagMapper
 import cn.jackuxl.qforum.service.TagService
 import org.springframework.beans.factory.annotation.Autowired
-import cn.jackuxl.qforum.mapper.TagMapper
-import cn.jackuxl.qforum.entity.Tag
 import org.springframework.stereotype.Service
 
 @Service

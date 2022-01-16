@@ -18,7 +18,7 @@ public class BasicUtil {
      */
     public static void assertTool(boolean valid, Code code, String message) {
         if (!valid) {
-            throw new CustomException(code,message);
+            throw new CustomException(code, message);
         }
     }
 

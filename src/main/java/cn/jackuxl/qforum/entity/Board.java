@@ -1,8 +1,6 @@
 package cn.jackuxl.qforum.entity;
 
 
-import cn.jackuxl.qforum.model.Result;
-
 public class Board {
     public int id;
     public String name;

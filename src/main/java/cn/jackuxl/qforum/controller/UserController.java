@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 @CrossOrigin
 @RestController
@@ -27,6 +29,7 @@ public class UserController {
     HttpServletResponse response;
     @Autowired
     HttpServletRequest request;
+
     @RequestMapping(value = "/user/register", produces = "application/json;charset=UTF-8")
     public ResultEntity<Object> register(User user, Boolean md5) {
         if (md5 == null || !md5) {
@@ -38,11 +41,11 @@ public class UserController {
         user.setLastLoginIp(getRemoteHost());
         user.setAdmin(false);
 
-        BasicUtil.assertTool(userService.getUserByUserName(user.getUserName()) == null,"username_already_exists");
-        BasicUtil.assertTool(!user.getUserName().contains("@"),"username_cannot_contain_at");
-        BasicUtil.assertTool(userService.getUserByEmail(user.getEmail()) == null,"email_already_exists");
+        BasicUtil.assertTool(userService.getUserByUserName(user.getUserName()) == null, "username_already_exists");
+        BasicUtil.assertTool(!user.getUserName().contains("@"), "username_cannot_contain_at");
+        BasicUtil.assertTool(userService.getUserByEmail(user.getEmail()) == null, "email_already_exists");
 
-        BasicUtil.assertTool(userService.register(user) > 0,"unknown");
+        BasicUtil.assertTool(userService.register(user) > 0, "unknown");
         return Result.INSTANCE.ok("success");
     }
 
@@ -51,19 +54,18 @@ public class UserController {
         if (md5 == null || !md5) {
             password = DigestUtils.md5DigestAsHex(password.getBytes());
         }
-        User user= null;
+        User user = null;
         if (userName.contains("@")) {
             user = userService.getUserByEmail(userName);
         } else if (userService.getUserByUserName(userName) != null) {
             user = userService.getUserByUserName(userName);
         }
-        BasicUtil.assertTool(user!=null,"no_such_user");
-        BasicUtil.assertTool(verifyPassword(password, user.getPassword(), user.getSalt()),"password_mismatch");
+        BasicUtil.assertTool(user != null, "no_such_user");
+        BasicUtil.assertTool(verifyPassword(password, user.getPassword(), user.getSalt()), "password_mismatch");
 
-        try{
+        try {
             userService.setLastLoginIp(user.getId(), getRemoteHost());
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -75,13 +77,13 @@ public class UserController {
         user.setPassword(null);
         user.setSalt(null);
 
-        return Result.INSTANCE.ok("success",user);
+        return Result.INSTANCE.ok("success", user);
     }
 
     @RequestMapping(value = "/user/logout", produces = "application/json;charset=UTF-8")
     public ResultEntity<String> logout(String sessionId) {
         User user = userService.getUserBySessionId(sessionId);
-        BasicUtil.assertTool(user != null,"no_such_user");
+        BasicUtil.assertTool(user != null, "no_such_user");
         userService.setSessionId(user.getId(), null);
         return Result.INSTANCE.ok("success");
     }
@@ -122,11 +124,11 @@ public class UserController {
             newPassword = DigestUtils.md5DigestAsHex(newPassword.getBytes());
             oldPassword = DigestUtils.md5DigestAsHex(oldPassword.getBytes());
         }
-        BasicUtil.assertTool(verifyPassword(oldPassword,user.getPassword(),user.getSalt()), "password_mismatch");
+        BasicUtil.assertTool(verifyPassword(oldPassword, user.getPassword(), user.getSalt()), "password_mismatch");
         newPassword = generate(newPassword, user.getSalt());
 
         BasicUtil.assertTool(userService.setPassword(user.getId(), newPassword) > 0, "unknown");
-        
+
         return Result.INSTANCE.ok("success");
     }
 
@@ -141,19 +143,18 @@ public class UserController {
     public ResultEntity<UserVo> getProfile(Integer id, String userName) {
         User user = null;
 
-        if(id!=null){
+        if (id != null) {
             user = userService.getUserById(id);
-        }
-        else if(userName!=null){
+        } else if (userName != null) {
             user = userService.getUserByUserName(userName);
         }
 
         BasicUtil.assertTool(user != null, "no_such_user");
 
         UserVo userVo = new UserVo();
-        BeanUtils.copyProperties(user,userVo);
+        BeanUtils.copyProperties(user, userVo);
 
-        return Result.INSTANCE.ok("success",userVo);
+        return Result.INSTANCE.ok("success", userVo);
     }
 
     /**

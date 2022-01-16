@@ -20,5 +20,5 @@ public interface ThreadMapper {
     List<Thread> listThreads(int boardId);
 
     @Update("update qf_thread set likeList=#{param2} where id=#{param1};")
-    int updateLikeList(int tid,String newLikeList);
+    int updateLikeList(int tid, String newLikeList);
 }

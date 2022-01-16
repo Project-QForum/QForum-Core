@@ -9,5 +9,5 @@ interface AppService {
     fun getAppById(id: Int): App?
     fun getAppByPackageName(packageName: String): App?
     fun listApps(): List<App>
-    fun getAppsByTag(tagId:Int): List<App>
+    fun getAppsByTag(tagId: Int): List<App>
 }

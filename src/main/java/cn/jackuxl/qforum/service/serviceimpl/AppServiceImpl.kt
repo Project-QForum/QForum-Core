@@ -1,7 +1,7 @@
 package cn.jackuxl.qforum.service.serviceimpl
 
-import cn.jackuxl.qforum.mapper.AppMapper
 import cn.jackuxl.qforum.entity.App
+import cn.jackuxl.qforum.mapper.AppMapper
 import cn.jackuxl.qforum.service.AppService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -22,7 +22,7 @@ class AppServiceImpl : AppService {
         return appMapper.getAppByPackageName(packageName)
     }
 
-    override fun getAppsByTag(tagId:Int): List<App> {
+    override fun getAppsByTag(tagId: Int): List<App> {
         return appMapper.getAppsByTag(tagId)
     }
 

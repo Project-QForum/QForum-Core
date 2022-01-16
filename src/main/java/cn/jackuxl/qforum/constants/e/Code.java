@@ -7,10 +7,12 @@ public enum Code {
     NOT_LOGIN(403),
     SUCCESS(200);
     final int code;
+
     public int value() {
         return code;
     }
-    Code(int code){
-        this.code=code;
+
+    Code(int code) {
+        this.code = code;
     }
 }

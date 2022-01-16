@@ -1,7 +1,7 @@
 package cn.jackuxl.qforum.service.serviceimpl;
 
-import cn.jackuxl.qforum.mapper.ThreadMapper;
 import cn.jackuxl.qforum.entity.Thread;
+import cn.jackuxl.qforum.mapper.ThreadMapper;
 import cn.jackuxl.qforum.service.ThreadService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -27,7 +27,7 @@ public class ThreadServiceImpl implements ThreadService {
     }
 
     @Override
-    public List<Thread> listThreads(int boardId){
+    public List<Thread> listThreads(int boardId) {
         List<Thread> threads = threadMapper.listThreads(boardId);
         for (Thread thread : threads) {
             if (Objects.equals(thread.getLikeList(), "null") || thread.getLikeList() == null) {
@@ -41,23 +41,23 @@ public class ThreadServiceImpl implements ThreadService {
     @Override
     public int likeThread(int tid, int uid) {
         JSONArray likeList = JSON.parseArray(threadMapper.getThreadById(tid).getLikeList());
-        for(int i = 0;i<likeList.size();i++){
-            if(likeList.getInteger(i)==uid){
+        for (int i = 0; i < likeList.size(); i++) {
+            if (likeList.getInteger(i) == uid) {
                 return 0;
             }
         }
         likeList.add(uid);
-        return threadMapper.updateLikeList(tid,likeList.toJSONString());
+        return threadMapper.updateLikeList(tid, likeList.toJSONString());
     }
 
     @Override
     public int disLikeThread(int tid, int uid) {
         JSONArray likeList = JSON.parseArray(threadMapper.getThreadById(tid).getLikeList());
-        for(int i = 0;i<likeList.size();i++){
-            if(likeList.getInteger(i)==uid){
+        for (int i = 0; i < likeList.size(); i++) {
+            if (likeList.getInteger(i) == uid) {
                 likeList.remove(i);
             }
         }
-        return threadMapper.updateLikeList(tid,likeList.toJSONString());
+        return threadMapper.updateLikeList(tid, likeList.toJSONString());
     }
 }

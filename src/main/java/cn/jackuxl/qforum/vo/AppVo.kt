@@ -3,20 +3,16 @@ package cn.jackuxl.qforum.vo
 import cn.jackuxl.qforum.entity.Tag
 
 data class AppVo(
-    var id: Int,
-    var name: String,
-    var postTime: String,
+    var id: Int = 0,
+    var name: String = "",
+    var postTime: String = "",
     var up: Boolean = false,
-    var publisher: UserVo?,
-    var downloadUrl: String?,
-    var iconUrl: String?,
-    var slogan: String?,
-    var version: String?,
-    var packageName: String?,
-    var description: String?,
-    var tag: Tag?
-) {
-    companion object {
-        fun empty() = AppVo(0, "", "", false, null, null, null, null, null, null, null, null)
-    }
-}
+    var publisher: UserVo? = null,
+    var downloadUrl: String? = null,
+    var iconUrl: String? = null,
+    var slogan: String? = null,
+    var version: String? = null,
+    var packageName: String? = null,
+    var description: String? = null,
+    var tag: Tag? = null
+)

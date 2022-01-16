@@ -1,7 +1,7 @@
 package cn.jackuxl.qforum.service.serviceimpl;
 
-import cn.jackuxl.qforum.mapper.UserMapper;
 import cn.jackuxl.qforum.entity.User;
+import cn.jackuxl.qforum.mapper.UserMapper;
 import cn.jackuxl.qforum.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,12 +35,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int setIntroduction(int id, String newIntroduction) {
-        return userMapper.setIntroduction(id,newIntroduction);
+        return userMapper.setIntroduction(id, newIntroduction);
     }
 
     @Override
     public int setAvatarUrl(int id, String newAvatarUrl) {
-        return userMapper.setAvatarUrl(id,newAvatarUrl);
+        return userMapper.setAvatarUrl(id, newAvatarUrl);
     }
 
     @Override

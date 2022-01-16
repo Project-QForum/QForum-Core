@@ -7,13 +7,11 @@ import cn.jackuxl.qforum.model.ResultEntity;
 import cn.jackuxl.qforum.service.serviceimpl.BoardServiceImpl;
 import cn.jackuxl.qforum.service.serviceimpl.UserServiceImpl;
 import cn.jackuxl.qforum.util.BasicUtil;
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @CrossOrigin
@@ -27,8 +25,8 @@ public class BoardController {
     @RequestMapping(value = "/admin/addBoard", produces = "application/json;charset=UTF-8")
     public ResultEntity<String> addBoard(String sessionId, Board board) {
         User user = userService.getUserBySessionId(sessionId);
-        BasicUtil.assertTool(user != null && sessionId != null && user.isAdmin(),"no_such_admin");
-        BasicUtil.assertTool(boardService.addBoard(board) > 0,"unknown");
+        BasicUtil.assertTool(user != null && sessionId != null && user.isAdmin(), "no_such_admin");
+        BasicUtil.assertTool(boardService.addBoard(board) > 0, "unknown");
         return Result.INSTANCE.ok("success");
     }
 

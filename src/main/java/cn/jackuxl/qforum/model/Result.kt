@@ -7,7 +7,7 @@ package cn.jackuxl.qforum.model
 import cn.jackuxl.qforum.constants.e.Code
 import kotlinx.serialization.Serializable
 
-object Result{
+object Result {
     fun <T> ok(): ResultEntity<T?> {
         return restResult(null, Code.SUCCESS.value(), null)
     }
@@ -38,4 +38,4 @@ object Result{
 }
 
 @Serializable
-data class ResultEntity<T>(var code : Int = 0, var msg: String?, var data:T?=null)
+data class ResultEntity<T>(var code: Int = 0, var msg: String?, var data: T? = null)

@@ -6,5 +6,5 @@ package cn.jackuxl.qforum.constants;
  */
 public class StaticProperty {
 
-    public final static String LOGIN_FAILED="请输入正确的用户名和密码";
+    public final static String LOGIN_FAILED = "请输入正确的用户名和密码";
 }

@@ -12,7 +12,7 @@ public class User {
     private String official;
     private String introduction = "这个人很懒，什么都没留下。";
     private String avatarUrl;
-    
+
 
     public String getUserName() {
         return userName;
@@ -42,15 +42,15 @@ public class User {
         return salt;
     }
 
-    public String getIntroduction(){
+    public String getIntroduction() {
         return introduction;
     }
 
-    public String getLastLoginIp(){
+    public String getLastLoginIp() {
         return this.lastLoginIp;
     }
 
-    public String getAvatarUrl(){
+    public String getAvatarUrl() {
         return this.avatarUrl;
     }
 
@@ -82,9 +82,13 @@ public class User {
         this.lastLoginIp = lastLoginIp;
     }
 
-    public void setIntroduction(String introduction){this.introduction = introduction;}
+    public void setIntroduction(String introduction) {
+        this.introduction = introduction;
+    }
 
-    public void setAvatarUrl(String avatarUrl){this.avatarUrl = avatarUrl;}
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
 
     public Boolean isAdmin() {
         return admin;

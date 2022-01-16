@@ -13,8 +13,8 @@ import java.io.File
 @RestController
 class ForumController {
     @RequestMapping(value = ["/forum/info"], produces = ["application/json;charset=UTF-8"])
-    fun getForumInfo(tagId:Int?): ResultEntity<JSONObject> {
+    fun getForumInfo(tagId: Int?): ResultEntity<JSONObject> {
         val info = JSON.parseObject(File("config.json").readText())
-        return Result.ok("success",info)
+        return Result.ok("success", info)
     }
 }
