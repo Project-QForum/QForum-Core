@@ -1,12 +1,11 @@
 package cn.jackuxl.qforum.controller
 
-import cn.jackuxl.qforum.serviceimpl.UserServiceImpl
+import cn.jackuxl.qforum.service.serviceimpl.UserServiceImpl
 import com.alibaba.fastjson.JSONObject
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
-import java.io.FileInputStream
 import java.io.OutputStream
 import java.time.LocalDate
 import java.util.*
@@ -100,7 +99,7 @@ class FileController {
         out.close()
     }
     fun MultipartFile.isImage():Boolean{
-        val suffixs = listOf(".jpg", ".jpeg", ".gif", ".png", ".bmp", ".webp");
+        val suffixs = listOf(".jpg", ".jpeg", ".gif", ".png", ".bmp", ".webp")
         for(i in 0 until 6){
             if(name.endsWith(suffixs[i])){
                 return true

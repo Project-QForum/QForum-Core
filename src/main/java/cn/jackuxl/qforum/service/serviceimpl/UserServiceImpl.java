@@ -1,4 +1,4 @@
-package cn.jackuxl.qforum.serviceimpl;
+package cn.jackuxl.qforum.service.serviceimpl;
 
 import cn.jackuxl.qforum.mapper.UserMapper;
 import cn.jackuxl.qforum.entity.User;

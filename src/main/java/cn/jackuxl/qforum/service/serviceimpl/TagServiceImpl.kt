@@ -1,4 +1,4 @@
-package cn.jackuxl.qforum.serviceimpl
+package cn.jackuxl.qforum.service.serviceimpl
 
 import cn.jackuxl.qforum.service.TagService
 import org.springframework.beans.factory.annotation.Autowired

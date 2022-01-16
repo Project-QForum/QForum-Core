@@ -10,7 +10,7 @@ public enum Code {
     public int value() {
         return code;
     }
-    private Code(int code){
+    Code(int code){
         this.code=code;
     }
 }

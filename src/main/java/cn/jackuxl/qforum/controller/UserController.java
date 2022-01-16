@@ -1,7 +1,7 @@
 package cn.jackuxl.qforum.controller;
 
 import cn.jackuxl.qforum.entity.User;
-import cn.jackuxl.qforum.serviceimpl.UserServiceImpl;
+import cn.jackuxl.qforum.service.serviceimpl.UserServiceImpl;
 import cn.jackuxl.qforum.util.InfoUtil;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

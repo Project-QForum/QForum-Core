@@ -7,17 +7,16 @@ package cn.jackuxl.qforum.model
 import cn.jackuxl.qforum.constants.e.Code
 import kotlinx.serialization.Serializable
 
-
 object Result{
     fun <T> ok(): ResultEntity<T?> {
         return restResult(null, Code.SUCCESS.value(), null)
     }
 
-    fun <T> ok(message: String?, data: T): ResultEntity<T> {
+    fun <T> ok(message: String, data: T): ResultEntity<T> {
         return restResult(data, Code.SUCCESS.value(), message)
     }
 
-    fun <T> ok(message: String?): ResultEntity<T?> {
+    fun <T> ok(message: String): ResultEntity<T?> {
         return restResult(null, Code.SUCCESS.value(), message)
     }
 
@@ -25,11 +24,11 @@ object Result{
         return restResult(data, Code.SUCCESS.value(), null)
     }
 
-    fun <T> failed(message: String?): ResultEntity<T?> {
+    fun <T> failed(message: String): ResultEntity<T?> {
         return restResult(null, Code.ERROR.value(), message)
     }
 
-    fun <T> failed(code: Code, message: String?): ResultEntity<T?> {
+    fun <T> failed(code: Code, message: String): ResultEntity<T?> {
         return restResult(null, code.value(), message)
     }
 
@@ -39,4 +38,4 @@ object Result{
 }
 
 @Serializable
-data class ResultEntity<T>(var code : Int = 0, var message: String? = null, var data:T?=null)
+data class ResultEntity<T>(var code : Int = 0, var msg: String?, var data:T?=null)

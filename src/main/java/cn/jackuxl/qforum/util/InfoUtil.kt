@@ -1,13 +1,13 @@
 package cn.jackuxl.qforum.util
 
 import cn.jackuxl.qforum.entity.User
-import cn.jackuxl.qforum.serviceimpl.UserServiceImpl
+import cn.jackuxl.qforum.service.serviceimpl.UserServiceImpl
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
 
 object InfoUtil {
     var userService: UserServiceImpl? = null
-    fun init(userService:UserServiceImpl){
+    fun init(userService: UserServiceImpl){
         this.userService = userService
     }
     fun getPublicUserInfo(uid:Int):JSONObject{

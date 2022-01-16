@@ -3,11 +3,11 @@ package cn.jackuxl.qforum.controller
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.beans.factory.annotation.Autowired
-import cn.jackuxl.qforum.serviceimpl.UserServiceImpl
+import cn.jackuxl.qforum.service.serviceimpl.UserServiceImpl
 import javax.servlet.http.HttpServletResponse
 import org.springframework.web.bind.annotation.RequestMapping
 import cn.jackuxl.qforum.entity.Tag
-import cn.jackuxl.qforum.serviceimpl.TagServiceImpl
+import cn.jackuxl.qforum.service.serviceimpl.TagServiceImpl
 import com.alibaba.fastjson.JSONObject
 
 @CrossOrigin
@@ -20,7 +20,7 @@ class TagController {
     lateinit var response: HttpServletResponse
 
     @Autowired
-    lateinit var tagService:TagServiceImpl
+    lateinit var tagService: TagServiceImpl
     @RequestMapping(value = ["/admin/addTag"], produces = ["application/json;charset=UTF-8"])
     fun addBoard(sessionId: String?, tag: Tag): String {
         val result = JSONObject()

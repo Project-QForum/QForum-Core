@@ -5,9 +5,9 @@ import cn.jackuxl.qforum.util.InfoUtil
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.beans.factory.annotation.Autowired
-import cn.jackuxl.qforum.serviceimpl.UserServiceImpl
-import cn.jackuxl.qforum.serviceimpl.ThreadServiceImpl
-import cn.jackuxl.qforum.serviceimpl.BoardServiceImpl
+import cn.jackuxl.qforum.service.serviceimpl.UserServiceImpl
+import cn.jackuxl.qforum.service.serviceimpl.ThreadServiceImpl
+import cn.jackuxl.qforum.service.serviceimpl.BoardServiceImpl
 import javax.servlet.http.HttpServletResponse
 import org.springframework.web.bind.annotation.RequestMapping
 import com.alibaba.fastjson.JSON
@@ -121,12 +121,12 @@ class ThreadController {
             result["msg"] = "success"
             when (type) {
                 LIKE -> {
-                    threadService.likeThread(tid, user.getId())
+                    threadService.likeThread(tid, user.id)
                     result["code"] = 200
                     result["msg"] = "success"
                 }
                 DISLIKE -> {
-                    threadService.disLikeThread(tid, user.getId())
+                    threadService.disLikeThread(tid, user.id)
                     result["code"] = 200
                     result["msg"] = "success"
                 }

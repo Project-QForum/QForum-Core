@@ -1,10 +1,11 @@
 package cn.jackuxl.qforum.controller
 
 import cn.jackuxl.qforum.entity.App
-import cn.jackuxl.qforum.model.ResultEntity
-import cn.jackuxl.qforum.serviceimpl.AppServiceImpl
-import cn.jackuxl.qforum.serviceimpl.TagServiceImpl
-import cn.jackuxl.qforum.serviceimpl.UserServiceImpl
+import cn.jackuxl.qforum.entity.User
+import cn.jackuxl.qforum.util.BasicUtil
+import cn.jackuxl.qforum.service.serviceimpl.AppServiceImpl
+import cn.jackuxl.qforum.service.serviceimpl.TagServiceImpl
+import cn.jackuxl.qforum.service.serviceimpl.UserServiceImpl
 import cn.jackuxl.qforum.util.InfoUtil
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
@@ -13,6 +14,12 @@ import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import javax.servlet.http.HttpServletResponse
+import cn.jackuxl.qforum.model.Result
+import cn.jackuxl.qforum.model.ResultEntity
+import cn.jackuxl.qforum.vo.AppVo
+import cn.jackuxl.qforum.vo.UserVo
+import com.fasterxml.jackson.databind.util.BeanUtil
+import org.springframework.beans.BeanUtils
 
 @CrossOrigin
 @RestController
@@ -20,94 +27,70 @@ class AppController {
     @Autowired
     lateinit var userService: UserServiceImpl
     @Autowired
-    lateinit var response: HttpServletResponse
-    @Autowired
     lateinit var appService: AppServiceImpl
     @Autowired
-    lateinit var tagService:TagServiceImpl
+    lateinit var tagService: TagServiceImpl
     @RequestMapping(value = ["/app/post"], produces = ["application/json;charset=UTF-8"])
-    fun postApp(sessionId: String?, app: App): String {
-        val result = JSONObject()
+    fun postApp(sessionId: String?, app: App): ResultEntity<App> {
         val user = userService.getUserBySessionId(sessionId)
-        if (user != null && sessionId != null) {
-            app.postTime = System.currentTimeMillis().toString()
-            app.publisherId = user.id
-            if (app.name.isNullOrBlank()) {
-                result["code"] = 403
-                result["error"] = "name_cannot_be_empty"
-            }
-            else if(app.packageName==null) {
-                result["code"] = 403
-                result["error"] = "packageName_cannot_be_empty"
-            } else if(tagService.getTagById(app.tagId)==null){
-                result["code"] = 403
-                result["error"] = "no_such_tag"
-            } else if(appService.getAppByPackageName(app.packageName as String)!=null){
-                result["code"] = 403
-                result["error"] = "packageName_already_exists"
-            } else if (appService.postApp(app) > 0) {
-                result["code"] = 200
-                result["msg"] = "success"
-                val apps = appService.listApps().reversed()
-                result["packageName"] = apps[apps.size - 1].packageName
-            } else {
-                result["code"] = 403
-                result["error"] = "unknown"
-            }
-        } else {
-            result["code"] = 403
-            result["error"] = "no_such_user"
-        }
-        return result.toJSONString()
+        BasicUtil.assertTool(user != null && sessionId != null,"no_such_user")
+        app.postTime = System.currentTimeMillis().toString()
+        app.publisherId = user.id
+
+        // Check the data
+        BasicUtil.assertTool(!app.name.isNullOrBlank(),"name_cannot_be_empty")
+        BasicUtil.assertTool(app.packageName!=null,"packageName_cannot_be_empty")
+        BasicUtil.assertTool(tagService.getTagById(app.tagId)!=null,"no_such_tag")
+        BasicUtil.assertTool(appService.getAppByPackageName(app.packageName as String)==null,"packageName_already_exists")
+        BasicUtil.assertTool(appService.postApp(app) > 0,"unknown")
+
+        // Operate and return the result
+        val apps = appService.listApps().reversed()
+        return Result.ok("success",apps[apps.size - 1])
     }
     @RequestMapping(value = ["/app/test"], produces = ["application/json;charset=UTF-8"])
-    fun test():ResultEntity<String>{
-        System.out.println(ResultEntity.ok("success","success").toString())
-        return ResultEntity.ok("success","success")
+    fun test(): ResultEntity<String> {
+        println(Result.ok("success","success").toString())
+        return Result.ok("success","success")
     }
     @RequestMapping(value = ["/app/list"], produces = ["application/json;charset=UTF-8"])
-    fun listApp(tagId:Int?): String {
-        val result = JSONObject()
-        result["code"] = 200
-        result["msg"] = "success"
-
+    fun listApp(tagId:Int?): ResultEntity<MutableList<AppVo>> {
         val apps:List<App> = if(tagId==null){
             appService.listApps()
         } else{
             appService.getAppsByTag(tagId)
         }
 
-        val tmp = JSON.parseArray(JSON.toJSONString(apps))
-        InfoUtil.init(userService)
-        for (i in tmp.indices) {
-            tmp.getJSONObject(i)["publisher"] = InfoUtil.getPublicUserInfo(tmp.getJSONObject(i).getInteger("publisherId"))
-            tmp.getJSONObject(i).remove("publisherId")
-            tmp.getJSONObject(i)["tag"] =  tagService.getTagById(tmp.getJSONObject(i).getInteger("tagId"))
-            tmp.getJSONObject(i).remove("tagId")
+        val data = mutableListOf<AppVo>()
+
+        for (i in apps.indices) {
+            val app = AppVo.empty().copy()
+            BeanUtils.copyProperties(apps[i],app)
+
+            val publisher = UserVo.empty().copy()
+            BeanUtils.copyProperties(userService.getUserById(apps[i].publisherId?:0),publisher)
+
+            app.publisher = publisher
+            app.tag = tagService.getTagById(apps[i].tagId)
+
+            data.add(app)
         }
-        result["appList"] = tmp
-        result["size"] = apps.size
-       
-        return result.toJSONString()
+        return Result.ok("success",data)
     }
 
     @RequestMapping(value = ["/app/getAppDetail"], produces = ["application/json;charset=UTF-8"])
-    fun getThreadDetail(packageName: String): String {
-        var result = JSONObject()
+    fun getThreadDetail(packageName: String): ResultEntity<AppVo> {
         val app = appService.getAppByPackageName(packageName)
-        if (app != null) {
-            result = JSON.parseObject(JSON.toJSONString(app))
-            result["code"] = 200
-            InfoUtil.init(userService)
-            result["publisher"] = InfoUtil.getPublicUserInfo(result.getInteger("publisherId"))
-            result.remove("publisherId")
-            result["tag"] = tagService.getTagById(result.getInteger("tagId"))
-            result.remove("tagId")
-        } else {
-            result["code"] = 403
-            result["error"] = "no_such_app"
-        }
-       
-        return result.toJSONString()
+        BasicUtil.assertTool(app!=null,"no_such_app")
+
+        val appVo = AppVo.empty().copy()
+        BeanUtils.copyProperties(app!!,appVo)
+        val publisher = UserVo.empty().copy()
+        BeanUtils.copyProperties(userService.getUserById(app.publisherId?:0),publisher)
+
+        appVo.publisher = publisher
+        appVo.tag = tagService.getTagById(app.tagId)
+
+        return Result.ok("success", appVo)
     }
 }

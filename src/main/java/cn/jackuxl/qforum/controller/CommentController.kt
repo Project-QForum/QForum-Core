@@ -2,9 +2,9 @@ package cn.jackuxl.qforum.controller
 
 import cn.jackuxl.qforum.entity.Comment
 import cn.jackuxl.qforum.entity.User
-import cn.jackuxl.qforum.serviceimpl.CommentServiceImpl
-import cn.jackuxl.qforum.serviceimpl.ThreadServiceImpl
-import cn.jackuxl.qforum.serviceimpl.UserServiceImpl
+import cn.jackuxl.qforum.service.serviceimpl.CommentServiceImpl
+import cn.jackuxl.qforum.service.serviceimpl.ThreadServiceImpl
+import cn.jackuxl.qforum.service.serviceimpl.UserServiceImpl
 import cn.jackuxl.qforum.util.InfoUtil
 import cn.jackuxl.qforum.util.InfoUtil.init
 import com.alibaba.fastjson.JSON
@@ -23,7 +23,7 @@ class CommentController {
     @Autowired
     lateinit var threadService: ThreadServiceImpl
     @Autowired
-    lateinit var commentService:CommentServiceImpl
+    lateinit var commentService: CommentServiceImpl
     @Autowired
     lateinit var response: HttpServletResponse
 
@@ -39,7 +39,7 @@ class CommentController {
                 result["code"] = 403
                 result["error"] = "content_cannot_be_empty"
             } else {
-                comment.publisherId = user.getId()
+                comment.publisherId = user.id
                 comment.postTime = System.currentTimeMillis().toString()
                 comment.up = false
                 val log = commentService.postComment(comment)

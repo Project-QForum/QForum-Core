@@ -2,8 +2,8 @@ package cn.jackuxl.qforum.controller;
 
 import cn.jackuxl.qforum.entity.Board;
 import cn.jackuxl.qforum.entity.User;
-import cn.jackuxl.qforum.serviceimpl.BoardServiceImpl;
-import cn.jackuxl.qforum.serviceimpl.UserServiceImpl;
+import cn.jackuxl.qforum.service.serviceimpl.BoardServiceImpl;
+import cn.jackuxl.qforum.service.serviceimpl.UserServiceImpl;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
