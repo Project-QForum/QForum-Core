@@ -79,7 +79,7 @@ class AppController {
     }
 
     @RequestMapping(value = ["/app/getAppDetail"], produces = ["application/json;charset=UTF-8"])
-    fun getThreadDetail(packageName: String): ResultEntity<App> {
+    fun getThreadDetail(packageName: String): ResultEntity<AppVo> {
 
         val app = appService.getAppByPackageName(packageName)
         BasicUtil.assertTool(app!=null,"no_such_app")
@@ -92,6 +92,6 @@ class AppController {
         appVo.publisher = publisher
         appVo.tag = tagService.getTagById(app.tagId)
 
-        return Result.ok("success",app)
+        return Result.ok("success",appVo)
     }
 }
