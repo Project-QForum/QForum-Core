@@ -2,8 +2,11 @@ package cn.jackuxl.qforum.controller;
 
 import cn.jackuxl.qforum.entity.Board;
 import cn.jackuxl.qforum.entity.User;
+import cn.jackuxl.qforum.model.Result;
+import cn.jackuxl.qforum.model.ResultEntity;
 import cn.jackuxl.qforum.service.serviceimpl.BoardServiceImpl;
 import cn.jackuxl.qforum.service.serviceimpl.UserServiceImpl;
+import cn.jackuxl.qforum.util.BasicUtil;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,39 +22,18 @@ public class BoardController {
     @Autowired
     private UserServiceImpl userService;
     @Autowired
-    private HttpServletResponse response;
-    @Autowired
     private BoardServiceImpl boardService;
 
     @RequestMapping(value = "/admin/addBoard", produces = "application/json;charset=UTF-8")
-    public String addBoard(String sessionId, Board board) {
-        JSONObject result = new JSONObject();
+    public ResultEntity<String> addBoard(String sessionId, Board board) {
         User user = userService.getUserBySessionId(sessionId);
-        if (user != null && sessionId != null && user.isAdmin()) {
-            if (boardService.addBoard(board) > 0) {
-                result.put("code", 200);
-                result.put("msg", "success");
-            } else {
-                result.put("code", 403);
-                result.put("error", "unknown");
-            }
-        } else {
-            result.put("code", 403);
-            result.put("error", "no_such_user");
-        }
-        
-        return result.toJSONString();
+        BasicUtil.assertTool(user != null && sessionId != null && user.isAdmin(),"no_such_admin");
+        BasicUtil.assertTool(boardService.addBoard(board) > 0,"unknown");
+        return Result.INSTANCE.ok("success");
     }
 
     @RequestMapping(value = "/board/list", produces = "application/json;charset=UTF-8")
-    public String listBoards() {
-        JSONObject result = new JSONObject();
-        result.put("code", 200);
-        result.put("msg", "success");
-        List<Board> boards = boardService.listBoards();
-        result.put("boardList",boards);
-        result.put("size",boards.size());
-        
-        return result.toJSONString();
+    public ResultEntity<List<Board>> listBoards() {
+        return Result.INSTANCE.ok(boardService.listBoards());
     }
 }

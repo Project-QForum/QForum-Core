@@ -7,7 +7,10 @@ import cn.jackuxl.qforum.service.serviceimpl.UserServiceImpl
 import javax.servlet.http.HttpServletResponse
 import org.springframework.web.bind.annotation.RequestMapping
 import cn.jackuxl.qforum.entity.Tag
+import cn.jackuxl.qforum.model.Result
+import cn.jackuxl.qforum.model.ResultEntity
 import cn.jackuxl.qforum.service.serviceimpl.TagServiceImpl
+import cn.jackuxl.qforum.util.BasicUtil
 import com.alibaba.fastjson.JSONObject
 
 @CrossOrigin
@@ -15,42 +18,21 @@ import com.alibaba.fastjson.JSONObject
 class TagController {
     @Autowired
     lateinit var userService: UserServiceImpl
-
-    @Autowired
-    lateinit var response: HttpServletResponse
-
     @Autowired
     lateinit var tagService: TagServiceImpl
+
     @RequestMapping(value = ["/admin/addTag"], produces = ["application/json;charset=UTF-8"])
-    fun addBoard(sessionId: String?, tag: Tag): String {
-        val result = JSONObject()
+    fun addBoard(sessionId: String?, tag: Tag): ResultEntity<String?> {
         val user = userService.getUserBySessionId(sessionId)
 
-        if (user != null && sessionId != null && user.isAdmin) {
-            if (tagService.addTag(tag) > 0) {
-                result["code"] = 200
-                result["msg"] = "success"
-            } else {
-                result["code"] = 403
-                result["error"] = "unknown"
-            }
-        } else {
-            result["code"] = 403
-            result["error"] = "no_such_user"
-        }
+        BasicUtil.assertTool(user != null && sessionId != null && user.isAdmin,"no_such_admin")
+        BasicUtil.assertTool(tagService.addTag(tag) > 0,"unknown")
        
-        return result.toJSONString()
+        return Result.ok("success")
     }
 
     @RequestMapping(value = ["/tag/list"], produces = ["application/json;charset=UTF-8"])
-    fun listBoards(): String {
-        val result = JSONObject()
-        result["code"] = 200
-        result["msg"] = "success"
-        val tags = tagService.listTags()
-        result["tagList"] = tags
-        result["size"] = tags.size
-       
-        return result.toJSONString()
+    fun listTags(): ResultEntity<List<Tag>> {
+        return Result.ok("success",tagService.listTags())
     }
 }

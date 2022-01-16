@@ -1,7 +1,9 @@
 package cn.jackuxl.qforum.controller
 
+import cn.jackuxl.qforum.model.Result
+import cn.jackuxl.qforum.model.ResultEntity
 import cn.jackuxl.qforum.service.serviceimpl.UserServiceImpl
-import com.alibaba.fastjson.JSONObject
+import cn.jackuxl.qforum.util.BasicUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
@@ -23,62 +25,30 @@ class FileController {
     @Autowired
     lateinit var request:HttpServletRequest
     @RequestMapping(value = ["/image/upload"], produces = ["application/json;charset=UTF-8"])
-    fun uploadImage(@RequestParam(value = "imageFile", required = false) file:MultipartFile): String? {
-        val result = JSONObject()
-        try{
-            if(file.isImage()){
-                result["code"] = 403
-                result["error"] = "suffix_not_allowed"
-                response.status = 403
-            }
-            else {
-                val rootPath = File("upload/images/${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}")
-                rootPath.mkdirs()
+    fun uploadImage(@RequestParam(value = "imageFile", required = false) file:MultipartFile): ResultEntity<Map<String, String>> {
+        BasicUtil.assertTool(file.isImage(),"suffix_not_allowed")
+        val rootPath = File("upload/images/${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}")
+        rootPath.mkdirs()
 
-                val img = File("${rootPath.absolutePath}/${System.currentTimeMillis()}_${UUID.randomUUID()}.png")
-                img.createNewFile()
-                file.transferTo(File(img.absolutePath))
+        val img = File("${rootPath.absolutePath}/${System.currentTimeMillis()}_${UUID.randomUUID()}.png")
+        img.createNewFile()
+        file.transferTo(File(img.absolutePath))
 
-                result["code"] = 200
-                result["msg"] = "上传成功"
-                result["url"] = "http://${request.serverName}:${request.serverPort}/upload/images/${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}/${img.name}"
-            }
-        }
-        catch (e:Exception){
-            result["code"] = 403
-            result["error"] = e.message
-            e.printStackTrace()
-        }
-        return result.toJSONString()
+        val map = mapOf("url" to "http://${request.serverName}:${request.serverPort}/upload/images/${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}/${img.name}")
+        return Result.ok("success",map)
     }
     @RequestMapping(value = ["/apk/upload"], produces = ["application/json;charset=UTF-8"])
-    fun uploadAPK(file:MultipartFile): String? {
-        val result = JSONObject()
-        try{
-            if(file.name.endsWith(".apk")){
-                result["code"] = 403
-                result["error"] = "suffix_not_allowed"
-                
-            }
-            else {
-                val rootPath = File("upload/apks/${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}")
-                rootPath.mkdirs()
+    fun uploadAPK(file:MultipartFile): ResultEntity<Map<String, String>> {
+        BasicUtil.assertTool(file.name.endsWith(".apk"),"suffix_not_allowed")
+        val rootPath = File("upload/apks/${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}")
+        rootPath.mkdirs()
 
-                val img = File("${rootPath.absolutePath}/${System.currentTimeMillis()}_${UUID.randomUUID()}.apk")
-                img.createNewFile()
-                file.transferTo(File(img.absolutePath))
+        val img = File("${rootPath.absolutePath}/${System.currentTimeMillis()}_${UUID.randomUUID()}.apk")
+        img.createNewFile()
+        file.transferTo(File(img.absolutePath))
 
-                result["success"] = 1
-                result["message"] = "上传成功"
-                result["url"] = "http://${request.serverName}:${request.serverPort}/upload/apks/${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}/${img.name}"
-            }
-        }
-        catch (e:Exception){
-            result["success"] = 0
-            result["error"] = e.message
-            e.printStackTrace()
-        }
-        return result.toJSONString()
+        val map = mapOf("url" to "http://${request.serverName}:${request.serverPort}/upload/apks/${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}/${img.name}")
+        return Result.ok("success",map)
     }
     @RequestMapping(value = ["/upload/apks/{year}/{month}/{day}/{fileName}"],produces = ["application/vnd.android.package-archive"])
     fun getAPK(@PathVariable year:String,@PathVariable month:String,@PathVariable day:String,@PathVariable fileName:String){
@@ -99,9 +69,9 @@ class FileController {
         out.close()
     }
     fun MultipartFile.isImage():Boolean{
-        val suffixs = listOf(".jpg", ".jpeg", ".gif", ".png", ".bmp", ".webp")
+        val suffixes = listOf(".jpg", ".jpeg", ".gif", ".png", ".bmp", ".webp")
         for(i in 0 until 6){
-            if(name.endsWith(suffixs[i])){
+            if(name.endsWith(suffixes[i])){
                 return true
             }
         }

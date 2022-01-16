@@ -2,13 +2,19 @@ package cn.jackuxl.qforum.controller
 
 import cn.jackuxl.qforum.entity.Comment
 import cn.jackuxl.qforum.entity.User
+import cn.jackuxl.qforum.model.Result
+import cn.jackuxl.qforum.model.ResultEntity
 import cn.jackuxl.qforum.service.serviceimpl.CommentServiceImpl
 import cn.jackuxl.qforum.service.serviceimpl.ThreadServiceImpl
 import cn.jackuxl.qforum.service.serviceimpl.UserServiceImpl
+import cn.jackuxl.qforum.util.BasicUtil
 import cn.jackuxl.qforum.util.InfoUtil
 import cn.jackuxl.qforum.util.InfoUtil.init
+import cn.jackuxl.qforum.vo.CommentVo
+import cn.jackuxl.qforum.vo.UserVo
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
+import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.RequestMapping
@@ -24,64 +30,41 @@ class CommentController {
     lateinit var threadService: ThreadServiceImpl
     @Autowired
     lateinit var commentService: CommentServiceImpl
-    @Autowired
-    lateinit var response: HttpServletResponse
 
     @RequestMapping(value = ["/comment/post"], produces = ["application/json;charset=UTF-8"])
-    fun postComment(sessionId: String?, comment: Comment): String? {
-        val result = JSONObject()
+    fun postComment(sessionId: String?, comment: Comment): ResultEntity<Comment> {
         val user: User? = userService.getUserBySessionId(sessionId)
-        if (user!=null && sessionId != null) {
-            if (threadService.getThreadById(comment.threadId as Int) == null) {
-                result["code"] = 403
-                result["error"] = "no_such_thread"
-            } else if (comment.content?.isEmpty() == true) {
-                result["code"] = 403
-                result["error"] = "content_cannot_be_empty"
-            } else {
-                comment.publisherId = user.id
-                comment.postTime = System.currentTimeMillis().toString()
-                comment.up = false
-                val log = commentService.postComment(comment)
-                if (log > 0) {
-                    result["code"] = 200
-                    result["msg"] = "success"
-                    val comments = commentService.listComments(comment.threadId as Int)
-                    result["comment"] = comments[comments.size-1]
-                } else {
-                    result["code"] = 403
-                    result["error"] = "unknown"
-                }
-            }
-        } else {
-            result["code"] = 403
-            result["error"] = "no_such_user"
-        }
-       
-        return result.toJSONString()
+        BasicUtil.assertTool(user!=null && sessionId != null,"no_such_user")
+        BasicUtil.assertTool(threadService.getThreadById(comment.threadId as Int) != null,"no_such_thread")
+        BasicUtil.assertTool(comment.content?.isEmpty() == false,"content_cannot_be_empty")
+
+        comment.publisherId = user?.id
+        comment.postTime = System.currentTimeMillis().toString()
+        comment.up = false
+
+        BasicUtil.assertTool(commentService.postComment(comment)>0,"unknown")
+
+        val comments = commentService.listComments(comment.threadId as Int)
+
+        return Result.ok("success",comments[comments.size-1])
     }
 
     @RequestMapping(value = ["/comment/list"], produces = ["application/json;charset=UTF-8"])
-    fun listComments(threadId: Int): String? {
-        val result = JSONObject()
-        if (threadService.getThreadById(threadId) != null) {
-            result["code"] = 200
-            result["msg"] = "success"
-            val comments = commentService.listComments(threadId)
-            val tmp = JSON.parseArray(JSON.toJSONString(comments))
-            init(userService)
-            for (i in tmp.indices) {
-                tmp.getJSONObject(i)["publisher"] = InfoUtil.getPublicUserInfo(tmp.getJSONObject(i).getInteger("publisherId"))
-                tmp.getJSONObject(i).remove("publisherId")
-            }
-            result["commentList"] = tmp
-            result["size"] = comments.size
-        } else {
-            result["code"] = 403
-            result["error"] = "no_such_thread"
+    fun listComments(threadId: Int): ResultEntity<MutableList<CommentVo>> {
+        BasicUtil.assertTool(threadService.getThreadById(threadId) != null,"no_such_thread")
+
+        val comments = commentService.listComments(threadId)
+        val data = mutableListOf<CommentVo>()
+        for (i in comments.indices) {
+            val publisher = UserVo.empty().copy()
+            BeanUtils.copyProperties(userService.getUserById(comments[i].publisherId?:0),publisher)
+
+            val comment = CommentVo.empty().copy(publisher = publisher, thread = threadService.getThreadById(comments[i].threadId?:0))
+            BeanUtils.copyProperties(comments[i],comment)
+
+            data.add(comment)
         }
-       
-        return result.toJSONString()
+        return Result.ok("success",data)
     }
 
 }

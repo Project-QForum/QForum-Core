@@ -1,9 +1,12 @@
 package cn.jackuxl.qforum.controller;
 
 import cn.jackuxl.qforum.entity.User;
+import cn.jackuxl.qforum.model.Result;
+import cn.jackuxl.qforum.model.ResultEntity;
 import cn.jackuxl.qforum.service.serviceimpl.UserServiceImpl;
-import cn.jackuxl.qforum.util.InfoUtil;
-import com.alibaba.fastjson.JSONObject;
+import cn.jackuxl.qforum.util.BasicUtil;
+import cn.jackuxl.qforum.vo.UserVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.ObjectUtils;
@@ -25,203 +28,132 @@ public class UserController {
     @Autowired
     HttpServletRequest request;
     @RequestMapping(value = "/user/register", produces = "application/json;charset=UTF-8")
-    public String register(User user, Boolean md5) {
+    public ResultEntity<Object> register(User user, Boolean md5) {
         if (md5 == null || !md5) {
             user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
         }
-        JSONObject result = new JSONObject();
         Map<String, String> md5Info = generate(user.getPassword());
         user.setPassword(md5Info.get("result"));
         user.setSalt(md5Info.get("salt"));
         user.setLastLoginIp(getRemoteHost());
-        if (userService.getUserByUserName(user.getUserName()) != null) {
-            // 用户名被占用
-            result.put("code", 403);
-            result.put("error", "username_already_exists");
-        } else if(user.getUserName().contains("@")){
-            result.put("code", 403);
-            result.put("error", "username_cannot_contain_at");
-        } else if (userService.getUserByEmail(user.getEmail()) != null) {
-            // 邮箱被占用
-            result.put("code", 403);
-            result.put("error", "email_already_exists");
-        } else if (userService.register(user) > 0) {
-            result.put("code", 200);
-            result.put("msg", "success");
-        } else {
-            result.put("code", 403);
-            result.put("error", "unknown");
-        }
-        return result.toJSONString();
+        user.setAdmin(false);
+
+        BasicUtil.assertTool(userService.getUserByUserName(user.getUserName()) == null,"username_already_exists");
+        BasicUtil.assertTool(!user.getUserName().contains("@"),"username_cannot_contain_at");
+        BasicUtil.assertTool(userService.getUserByEmail(user.getEmail()) == null,"email_already_exists");
+
+        BasicUtil.assertTool(userService.register(user) > 0,"unknown");
+        return Result.INSTANCE.ok("success");
     }
 
     @RequestMapping(value = "/user/login", produces = "application/json;charset=UTF-8")
-    public String login(String userName, String password, Boolean md5) {
+    public ResultEntity<User> login(String userName, String password, Boolean md5) {
         if (md5 == null || !md5) {
             password = DigestUtils.md5DigestAsHex(password.getBytes());
         }
-        JSONObject result = new JSONObject();
-        User user;
+        User user= null;
         if (userName.contains("@")) {
             user = userService.getUserByEmail(userName);
-            result = checkPasswordForLogin(password, user);
         } else if (userService.getUserByUserName(userName) != null) {
             user = userService.getUserByUserName(userName);
-            result = checkPasswordForLogin(password, user);
-        } else {
-            result.put("code", 403);
-            result.put("error", "no_such_user");
         }
-        
-        return result.toJSONString();
+        BasicUtil.assertTool(user!=null,"no_such_user");
+        BasicUtil.assertTool(verifyPassword(password, user.getPassword(), user.getSalt()),"password_mismatch");
+
+        try{
+            userService.setLastLoginIp(user.getId(), getRemoteHost());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
+        final String sessionId = getSessionId();
+        userService.setSessionId(user.getId(), sessionId);
+
+        user.setSessionId(sessionId);
+        user.setLastLoginIp(null);
+        user.setPassword(null);
+        user.setSalt(null);
+
+        return Result.INSTANCE.ok("success",user);
     }
 
     @RequestMapping(value = "/user/logout", produces = "application/json;charset=UTF-8")
-    public String logout(String sessionId) {
-        JSONObject result = new JSONObject();
+    public ResultEntity<String> logout(String sessionId) {
         User user = userService.getUserBySessionId(sessionId);
-        if (user != null) {
-            userService.setSessionId(user.getId(), null);
-            result.put("code", 200);
-            result.put("msg", "success");
-        } else {
-            result.put("code", 403);
-            result.put("error", "no_such_user");
-        }
-        
-        return result.toJSONString();
+        BasicUtil.assertTool(user != null,"no_such_user");
+        userService.setSessionId(user.getId(), null);
+        return Result.INSTANCE.ok("success");
     }
 
     @RequestMapping(value = "/user/setUserName", produces = "application/json;charset=UTF-8")
-    public String setUserName(String sessionId, String newName) {
-        JSONObject result = new JSONObject();
+    public ResultEntity<String> setUserName(String sessionId, String newName) {
         User user = userService.getUserBySessionId(sessionId);
-        if (userService.getUserByUserName(newName) != null) {
-            // 用户名被占用
-            result.put("code", 403);
-            result.put("error", "username_already_exists");
-        } else if (user != null && sessionId != null) {
-            if (userService.setUserName(user.getId(), newName) > 0) {
-                result.put("code", 200);
-                result.put("msg", "success");
-            } else {
-                result.put("code", 403);
-                result.put("error", "unknown");
-            }
-        } else {
-            result.put("code", 403);
-            result.put("error", "no_such_user");
-        }
-        
-        return result.toJSONString();
+        BasicUtil.assertTool(user != null && sessionId != null, "no_such_user");
+        BasicUtil.assertTool(userService.getUserByUserName(newName) == null, "username_already_exists");
+
+        BasicUtil.assertTool(userService.setUserName(user.getId(), newName) > 0, "unknown");
+        return Result.INSTANCE.ok("success");
     }
 
     @RequestMapping(value = "/user/setIntroduction", produces = "application/json;charset=UTF-8")
-    public String setIntroduction(String sessionId, String newIntroduction) {
-        JSONObject result = new JSONObject();
+    public ResultEntity<String> setIntroduction(String sessionId, String newIntroduction) {
         User user = userService.getUserBySessionId(sessionId);
-        if (user != null && sessionId != null) {
-            if (userService.setIntroduction(user.getId(),newIntroduction) > 0) {
-                result.put("code", 200);
-                result.put("msg", "success");
-            } else {
-                result.put("code", 403);
-                result.put("error", "unknown");
-            }
-        } else {
-            result.put("code", 403);
-            result.put("error", "no_such_user");
-        }
-        
-        return result.toJSONString();
+        BasicUtil.assertTool(user != null && sessionId != null, "no_such_user");
+
+        BasicUtil.assertTool(userService.setIntroduction(user.getId(), newIntroduction) > 0, "unknown");
+        return Result.INSTANCE.ok("success");
     }
 
     @RequestMapping(value = "/user/setAvatarUrl", produces = "application/json;charset=UTF-8")
-    public String setAvatarUrl(String sessionId, String newAvatarUrl) {
-        JSONObject result = new JSONObject();
+    public ResultEntity<String> setAvatarUrl(String sessionId, String newAvatarUrl) {
         User user = userService.getUserBySessionId(sessionId);
-        if (user != null && sessionId != null) {
-            if (userService.setAvatarUrl(user.getId(),newAvatarUrl) > 0) {
-                result.put("code", 200);
-                result.put("msg", "success");
-            } else {
-                result.put("code", 403);
-                result.put("error", "unknown");
-            }
-        } else {
-            result.put("code", 403);
-            result.put("error", "no_such_user");
-        }
-        
-        return result.toJSONString();
+        BasicUtil.assertTool(user != null && sessionId != null, "no_such_user");
+
+        BasicUtil.assertTool(userService.setAvatarUrl(user.getId(), newAvatarUrl) > 0, "unknown");
+        return Result.INSTANCE.ok("success");
     }
 
     @RequestMapping(value = "/user/setPassword", produces = "application/json;charset=UTF-8")
-    public String setPassword(String sessionId, String oldPassword, String newPassword, Boolean md5) {
-        JSONObject result = new JSONObject();
+    public ResultEntity<String> setPassword(String sessionId, String oldPassword, String newPassword, Boolean md5) {
         User user = userService.getUserBySessionId(sessionId);
-        if (user != null && sessionId != null) {
-            if (md5 == null || !md5) {
-                newPassword = DigestUtils.md5DigestAsHex(newPassword.getBytes());
-                oldPassword = DigestUtils.md5DigestAsHex(oldPassword.getBytes());
-            }
-            if (verifyPassword(oldPassword,user.getPassword(),user.getSalt())) {
-                newPassword = generate(newPassword, user.getSalt());
-                if (userService.setPassword(user.getId(), newPassword) > 0) {
-                    result.put("code", 200);
-                    result.put("msg", "success");
-                } else {
-                    result.put("code", 403);
-                    result.put("error", "unknown");
-                }
-            } else {
-                result.put("code", 403);
-                result.put("error", "password_mismatch");
-            }
-        } else {
-            result.put("code", 403);
-            result.put("error", "no_such_user");
+        BasicUtil.assertTool(user != null && sessionId != null, "no_such_user");
+        if (md5 == null || !md5) {
+            newPassword = DigestUtils.md5DigestAsHex(newPassword.getBytes());
+            oldPassword = DigestUtils.md5DigestAsHex(oldPassword.getBytes());
         }
+        BasicUtil.assertTool(verifyPassword(oldPassword,user.getPassword(),user.getSalt()), "password_mismatch");
+        newPassword = generate(newPassword, user.getSalt());
+
+        BasicUtil.assertTool(userService.setPassword(user.getId(), newPassword) > 0, "unknown");
         
-        return result.toJSONString();
+        return Result.INSTANCE.ok("success");
     }
 
     @RequestMapping(value = "/user/checkLogin", produces = "application/json;charset=UTF-8")
-    public String checkLogin(String sessionId) {
-        JSONObject result = new JSONObject();
+    public ResultEntity<String> checkLogin(String sessionId) {
         User user = userService.getUserBySessionId(sessionId);
-        if (user != null) {
-            result.put("code", 200);
-            result.put("msg", "success");
-        } else {
-            result.put("code", 403);
-            result.put("error", "no_such_user");
-        }
-        
-        return result.toJSONString();
+        BasicUtil.assertTool(user != null, "no_such_user");
+        return Result.INSTANCE.ok("success");
     }
 
     @RequestMapping(value = "/user/getProfile", produces = "application/json;charset=UTF-8")
-    public String getProfile(Integer id,String userName) {
-        JSONObject result = new JSONObject();
+    public ResultEntity<UserVo> getProfile(Integer id, String userName) {
         User user = null;
+
         if(id!=null){
             user = userService.getUserById(id);
         }
         else if(userName!=null){
             user = userService.getUserByUserName(userName);
         }
-        if (user != null) {
-            result.put("code", 200);
-            result.put("msg", "success");
-            InfoUtil.INSTANCE.init(userService);
-            result.put("profile", InfoUtil.INSTANCE.removeConfidentialInfo(user));
-        } else {
-            result.put("code", 403);
-            result.put("error", "no_such_user");
-        }
-        
-        return result.toJSONString();
+
+        BasicUtil.assertTool(user != null, "no_such_user");
+
+        UserVo userVo = new UserVo();
+        BeanUtils.copyProperties(user,userVo);
+
+        return Result.INSTANCE.ok("success",userVo);
     }
 
     /**
@@ -304,33 +236,6 @@ public class UserController {
         return new String(cs).equals(password_md5);
     }
 
-    private JSONObject checkPasswordForLogin(String password, User user) {
-        JSONObject result = new JSONObject();
-        if (user != null) {
-            if (verifyPassword(password, user.getPassword(), user.getSalt())) {
-                result.put("code", 200);
-                result.put("msg", "success");
-                InfoUtil.INSTANCE.init(userService);
-                JSONObject profile = InfoUtil.INSTANCE.getPublicUserInfo(user.getId());
-                profile.put("sessionId",getSessionId());
-                result.put("profile", profile);
-                try{
-                    userService.setLastLoginIp(user.getId(), getRemoteHost());
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-                }
-                userService.setSessionId(user.getId(), getSessionId());
-            } else {
-                result.put("code", 403);
-                result.put("error", "password_mismatch");
-            }
-        } else {
-            result.put("code", 403);
-            result.put("error", "no_such_user");
-        }
-        return result;
-    }
 
     private String getSessionId() {
         return request.getSession().getId();

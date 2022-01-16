@@ -6,7 +6,7 @@ public enum Code {
     ILLEGAL_PARAMETER(400),
     NOT_LOGIN(403),
     SUCCESS(200);
-    int code;
+    final int code;
     public int value() {
         return code;
     }

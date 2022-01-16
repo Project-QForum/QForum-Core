@@ -1,6 +1,9 @@
 package cn.jackuxl.qforum.controller
 
 import cn.jackuxl.qforum.entity.Thread
+import cn.jackuxl.qforum.exception.CustomException
+import cn.jackuxl.qforum.model.Result
+import cn.jackuxl.qforum.model.ResultEntity
 import cn.jackuxl.qforum.util.InfoUtil
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.RestController
@@ -8,10 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import cn.jackuxl.qforum.service.serviceimpl.UserServiceImpl
 import cn.jackuxl.qforum.service.serviceimpl.ThreadServiceImpl
 import cn.jackuxl.qforum.service.serviceimpl.BoardServiceImpl
+import cn.jackuxl.qforum.util.BasicUtil
+import cn.jackuxl.qforum.vo.AppVo
+import cn.jackuxl.qforum.vo.ThreadVo
+import cn.jackuxl.qforum.vo.UserVo
 import javax.servlet.http.HttpServletResponse
 import org.springframework.web.bind.annotation.RequestMapping
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
+import org.springframework.beans.BeanUtils
 import org.springframework.lang.NonNull
 
 @CrossOrigin
@@ -19,127 +27,81 @@ import org.springframework.lang.NonNull
 class ThreadController {
     @Autowired
     lateinit var userService: UserServiceImpl
-
     @Autowired
     lateinit var threadService: ThreadServiceImpl
-
     @Autowired
     lateinit var boardService: BoardServiceImpl
-
-    @Autowired
-    lateinit var response: HttpServletResponse
-
     @RequestMapping(value = ["/thread/post"], produces = ["application/json;charset=UTF-8"])
-    fun postThread(sessionId: String?, thread: Thread): String {
-        val result = JSONObject()
+    fun postThread(sessionId: String?, thread: Thread): ResultEntity<Thread> {
         val user = userService.getUserBySessionId(sessionId)
-        if (user != null && sessionId != null) {
-            if (boardService.getBoardById(thread.boardId) == null) {
-                result["code"] = 403
-                result["error"] = "no_such_board"
-            } else if (thread.title.isNullOrBlank()) {
-                result["code"] = 403
-                result["error"] = "title_cannot_be_empty"
-            } else {
-                thread.publisherId = user.id
-                thread.postTime = System.currentTimeMillis().toString()
-                thread.likeList = "[]"
-                if (threadService.postThread(thread) > 0) {
-                    result["code"] = 200
-                    result["msg"] = "success"
-                    val threads = threadService.listThreads(thread.boardId)
-                    result["id"] = threads[threads.size - 1].id
-                } else {
-                    result["code"] = 403
-                    result["error"] = "unknown"
-                }
-            }
-        } else {
-            result["code"] = 403
-            result["error"] = "no_such_user"
-        }
-       
-        return result.toJSONString()
+        BasicUtil.assertTool(user != null && sessionId != null, "no_such_user")
+        BasicUtil.assertTool(boardService.getBoardById(thread.boardId) != null, "no_such_board")
+        BasicUtil.assertTool(!thread.title.isNullOrBlank(), "title_cannot_be_empty")
+
+        thread.publisherId = user.id
+        thread.postTime = System.currentTimeMillis().toString()
+        thread.likeList = "[]"
+
+        BasicUtil.assertTool(threadService.postThread(thread) > 0, "unknown")
+
+        val threads = threadService.listThreads(thread.boardId)
+        return Result.ok("success",threads[threads.size - 1])
     }
 
     @RequestMapping(value = ["/thread/getThreadDetail"], produces = ["application/json;charset=UTF-8"])
-    fun getThreadDetail(id: Int): String {
-        var result = JSONObject()
+    fun getThreadDetail(id: Int): ResultEntity<ThreadVo> {
         val thread = threadService.getThreadById(id)
-        if (thread != null) {
-            result = JSON.parseObject(JSON.toJSONString(thread))
-            result["code"] = 200
-            InfoUtil.init(userService)
-            result["publisher"] = InfoUtil.getPublicUserInfo(result.getInteger("publisherId"))
-            result.remove("publisherId")
-            result["board"] = boardService.getBoardById(result.getInteger("boardId"))
-            result.remove("boardId")
-            if(result["likeList"]==null||result["likeList"]=="null"){
-                result["likeList"] = "[]"
-            }
-        } else {
-            result["code"] = 403
-            result["error"] = "no_such_thread"
+        BasicUtil.assertTool(thread != null, "no_such_thread")
+
+        val publisher = UserVo.empty().copy()
+        BeanUtils.copyProperties(userService.getUserById(thread.publisherId),publisher)
+
+        val data = ThreadVo(publisher = publisher, board = boardService.getBoardById(thread.boardId))
+        BeanUtils.copyProperties(thread,data);
+
+        if(data.likeList=="null"){
+            data.likeList = "[]"
         }
-       
-        return result.toJSONString()
+        return Result.ok("success",data)
     }
 
     @RequestMapping(value = ["/thread/list"], produces = ["application/json;charset=UTF-8"])
-    fun listThreads(boardId: Int): String {
-        val result = JSONObject()
-        if (boardService.getBoardById(boardId) != null) {
-            result["code"] = 200
-            result["msg"] = "success"
-            val threads = threadService.listThreads(boardId)
-            val tmp = JSON.parseArray(JSON.toJSONString(threads))
-            for (i in tmp.indices) {
-                InfoUtil.init(userService)
-                tmp.getJSONObject(i)["publisher"] = InfoUtil.getPublicUserInfo(tmp.getJSONObject(i).getInteger("publisherId"))
-                tmp.getJSONObject(i).remove("publisherId")
-                tmp.getJSONObject(i)["board"] =  boardService.getBoardById(tmp.getJSONObject(i).getInteger("boardId"))
-                tmp.getJSONObject(i).remove("boardId")
-            }
-            result["threadList"] = tmp
-            result["size"] = threads.size
-        } else {
-            result["code"] = 403
-            result["error"] = "no_such_board"
+    fun listThreads(boardId: Int?): ResultEntity<MutableList<ThreadVo>> {
+        BasicUtil.assertTool(boardService.getBoardById(boardId?:0) != null,"no_such_board")
+
+        val threads = threadService.listThreads(boardId!!)
+        val data = mutableListOf<ThreadVo>()
+        for (i in threads.indices) {
+            val publisher = UserVo.empty().copy()
+            BeanUtils.copyProperties(userService.getUserById(threads[i].publisherId),publisher)
+
+            val thread = ThreadVo(publisher=publisher, board = boardService.getBoardById(threads[i].boardId))
+            BeanUtils.copyProperties(threads[i],thread)
+            data.add(thread)
         }
        
-        return result.toJSONString()
+        return Result.ok("success",data)
     }
 
     val LIKE = 0
     val DISLIKE = 1
     @RequestMapping(value = ["/thread/like"], produces = ["application/json;charset=UTF-8"])
-    fun likeThread(@NonNull type: Int, @NonNull tid: Int, @NonNull sessionId: String?): String {
-        val result = JSONObject()
+    fun likeThread(@NonNull type: Int, @NonNull tid: Int, @NonNull sessionId: String?): ResultEntity<String?> {
         val user = userService.getUserBySessionId(sessionId)
-        if (user != null) {
-            result["code"] = 200
-            result["msg"] = "success"
-            when (type) {
-                LIKE -> {
-                    threadService.likeThread(tid, user.id)
-                    result["code"] = 200
-                    result["msg"] = "success"
-                }
-                DISLIKE -> {
-                    threadService.disLikeThread(tid, user.id)
-                    result["code"] = 200
-                    result["msg"] = "success"
-                }
-                else -> {
-                    result["code"] = 403
-                    result["msg"] = "error_type"
-                }
+
+        BasicUtil.assertTool(user != null,"no_such_user")
+        when (type) {
+            LIKE -> {
+                BasicUtil.assertTool(threadService.likeThread(tid, user.id) > 0,"unknown")
             }
-        } else {
-            result["code"] = 403
-            result["error"] = "no_such_user"
+            DISLIKE -> {
+                BasicUtil.assertTool(threadService.disLikeThread(tid, user.id) > 0,"unknown")
+            }
+            else -> {
+                throw CustomException(msg = "error_type")
+            }
         }
        
-        return result.toJSONString()
+        return Result.ok("success")
     }
 }

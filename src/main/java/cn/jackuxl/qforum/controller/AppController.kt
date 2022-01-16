@@ -1,24 +1,18 @@
 package cn.jackuxl.qforum.controller
 
 import cn.jackuxl.qforum.entity.App
-import cn.jackuxl.qforum.entity.User
 import cn.jackuxl.qforum.util.BasicUtil
 import cn.jackuxl.qforum.service.serviceimpl.AppServiceImpl
 import cn.jackuxl.qforum.service.serviceimpl.TagServiceImpl
 import cn.jackuxl.qforum.service.serviceimpl.UserServiceImpl
-import cn.jackuxl.qforum.util.InfoUtil
-import com.alibaba.fastjson.JSON
-import com.alibaba.fastjson.JSONObject
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import javax.servlet.http.HttpServletResponse
 import cn.jackuxl.qforum.model.Result
 import cn.jackuxl.qforum.model.ResultEntity
 import cn.jackuxl.qforum.vo.AppVo
 import cn.jackuxl.qforum.vo.UserVo
-import com.fasterxml.jackson.databind.util.BeanUtil
 import org.springframework.beans.BeanUtils
 
 @CrossOrigin
@@ -48,11 +42,6 @@ class AppController {
         val apps = appService.listApps().reversed()
         return Result.ok("success",apps[apps.size - 1])
     }
-    @RequestMapping(value = ["/app/test"], produces = ["application/json;charset=UTF-8"])
-    fun test(): ResultEntity<String> {
-        println(Result.ok("success","success").toString())
-        return Result.ok("success","success")
-    }
     @RequestMapping(value = ["/app/list"], produces = ["application/json;charset=UTF-8"])
     fun listApp(tagId:Int?): ResultEntity<MutableList<AppVo>> {
         val apps:List<App> = if(tagId==null){
@@ -64,14 +53,11 @@ class AppController {
         val data = mutableListOf<AppVo>()
 
         for (i in apps.indices) {
-            val app = AppVo.empty().copy()
-            BeanUtils.copyProperties(apps[i],app)
-
             val publisher = UserVo.empty().copy()
             BeanUtils.copyProperties(userService.getUserById(apps[i].publisherId?:0),publisher)
 
-            app.publisher = publisher
-            app.tag = tagService.getTagById(apps[i].tagId)
+            val app = AppVo.empty().copy(publisher = publisher,tag = tagService.getTagById(apps[i].tagId))
+            BeanUtils.copyProperties(apps[i],app)
 
             data.add(app)
         }
