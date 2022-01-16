@@ -14,10 +14,10 @@ interface AppMapper {
     fun getAppById(id: Int): App?
 
     @Select("select * from qf_app where tagId=#{param1};")
-    fun getAppsByTag(tagId: Int): List<App>
+    fun getAppsByTag(tagId:Int): List<App>
 
     @Select("select * from qf_app where packageName=#{param1};")
-    fun getAppByPackageName(packageName: String): App?
+    fun getAppByPackageName(packageName:String): App?
 
     @Select("select * from qf_app order by id desc")
     fun listApps(): List<App>

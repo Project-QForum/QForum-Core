@@ -40,6 +40,7 @@ public class UserController {
         user.setSalt(md5Info.get("salt"));
         user.setLastLoginIp(getRemoteHost());
         user.setAdmin(false);
+        user.setOfficial(null);
 
         BasicUtil.assertTool(userService.getUserByUserName(user.getUserName()) == null, "username_already_exists");
         BasicUtil.assertTool(!user.getUserName().contains("@"), "username_cannot_contain_at");

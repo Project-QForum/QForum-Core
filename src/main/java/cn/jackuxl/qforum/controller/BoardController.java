@@ -25,13 +25,13 @@ public class BoardController {
     @RequestMapping(value = "/admin/addBoard", produces = "application/json;charset=UTF-8")
     public ResultEntity<String> addBoard(String sessionId, Board board) {
         User user = userService.getUserBySessionId(sessionId);
-        BasicUtil.assertTool(user != null && sessionId != null && user.isAdmin(), "no_such_admin");
+        BasicUtil.assertTool(user != null && sessionId != null && Boolean.TRUE.equals(user.getAdmin()), "no_such_admin");
         BasicUtil.assertTool(boardService.addBoard(board) > 0, "unknown");
         return Result.INSTANCE.ok("success");
     }
 
     @RequestMapping(value = "/board/list", produces = "application/json;charset=UTF-8")
     public ResultEntity<List<Board>> listBoards() {
-        return Result.INSTANCE.ok(boardService.listBoards());
+        return Result.INSTANCE.ok("success",boardService.listBoards());
     }
 }

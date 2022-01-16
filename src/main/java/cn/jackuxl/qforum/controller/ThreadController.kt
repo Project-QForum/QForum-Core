@@ -1,6 +1,7 @@
 package cn.jackuxl.qforum.controller
 
 import cn.jackuxl.qforum.entity.Thread
+import cn.jackuxl.qforum.entity.Board
 import cn.jackuxl.qforum.exception.CustomException
 import cn.jackuxl.qforum.model.Result
 import cn.jackuxl.qforum.model.ResultEntity

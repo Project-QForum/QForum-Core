@@ -24,7 +24,7 @@ class TagController {
     fun addBoard(sessionId: String?, tag: Tag): ResultEntity<String?> {
         val user = userService.getUserBySessionId(sessionId)
 
-        BasicUtil.assertTool(user != null && sessionId != null && user.isAdmin, "no_such_admin")
+        BasicUtil.assertTool(user != null && sessionId != null && user.admin == true, "no_such_admin")
         BasicUtil.assertTool(tagService.addTag(tag) > 0, "unknown")
 
         return Result.ok("success")
