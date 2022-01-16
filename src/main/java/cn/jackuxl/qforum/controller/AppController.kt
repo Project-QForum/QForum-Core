@@ -1,5 +1,6 @@
 package cn.jackuxl.qforum.controller
 
+import cn.jackuxl.qforum.constants.e.Code
 import cn.jackuxl.qforum.entity.App
 import cn.jackuxl.qforum.model.Result
 import cn.jackuxl.qforum.model.ResultEntity
