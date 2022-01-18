@@ -1,6 +1,12 @@
 package cn.jackuxl.qforum.entity
 
+import com.baomidou.mybatisplus.annotation.IdType
+import com.baomidou.mybatisplus.annotation.TableId
+import com.baomidou.mybatisplus.annotation.TableName
+
+@TableName("qf_app")
 data class App(
+    @TableId(type = IdType.AUTO)
     var id: Int?,
     var name: String?,
     var postTime: String?,
@@ -13,6 +19,4 @@ data class App(
     var packageName: String?,
     var description: String?,
     var tagId: Int = 0
-) {
-    constructor() : this(null, null, null, false, null, null, null, null, null, null, null, 0)
-}
+)

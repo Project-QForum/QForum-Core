@@ -1,10 +1,10 @@
 package cn.jackuxl.qforum.controller
 
+import cn.dev33.satoken.stp.StpUtil
 import cn.jackuxl.qforum.entity.Tag
 import cn.jackuxl.qforum.model.Result
 import cn.jackuxl.qforum.model.ResultEntity
 import cn.jackuxl.qforum.service.serviceimpl.TagServiceImpl
-import cn.jackuxl.qforum.service.serviceimpl.UserServiceImpl
 import cn.jackuxl.qforum.util.BasicUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -15,16 +15,12 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class TagController {
     @Autowired
-    lateinit var userService: UserServiceImpl
-
-    @Autowired
     lateinit var tagService: TagServiceImpl
 
     @RequestMapping(value = ["/admin/addTag"], produces = ["application/json;charset=UTF-8"])
-    fun addBoard(sessionId: String?, tag: Tag): ResultEntity<String?> {
-        val user = userService.getUserBySessionId(sessionId)
-
-        BasicUtil.assertTool(user != null && sessionId != null && user.admin == true, "no_such_admin")
+    fun addBoard(tag: Tag): ResultEntity<String?> {
+        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, "no_such_user")
+        BasicUtil.assertTool(StpUtil.hasRole("admin"), "no_such_admin")
         BasicUtil.assertTool(tagService.addTag(tag) > 0, "unknown")
 
         return Result.ok("success")

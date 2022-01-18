@@ -49,11 +49,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserBySessionId(String sessionId) {
-        return userMapper.getUserBySessionId(sessionId);
-    }
-
-    @Override
     public int setUserName(int id, String newName) {
         return userMapper.setUserName(id, newName);
     }
@@ -61,11 +56,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public int setPassword(int id, String newPassword) {
         return userMapper.setPassword(id, newPassword);
-    }
-
-    @Override
-    public void setSessionId(int id, String newSessionId) {
-        userMapper.setSessionId(id, newSessionId);
     }
 
     @Override

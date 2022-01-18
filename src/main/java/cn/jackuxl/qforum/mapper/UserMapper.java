@@ -25,17 +25,11 @@ public interface UserMapper {
     @Select("select * from qf_user where email=#{param1};")
     User getUserByEmail(String email);
 
-    @Select("select * from qf_user where sessionId=#{param1};")
-    User getUserBySessionId(String sessionId);
-
     @Update("update qf_user set username=#{param2} where id=#{param1};")
     int setUserName(int id, String newName);
 
     @Update("update qf_user set password=#{param2} where id=#{param1};")
     int setPassword(int id, String newPassword);
-
-    @Update("update qf_user set sessionId=#{param2} where id=#{param1};")
-    void setSessionId(int id, String newSessionId);
 
     @Update("update qf_user set introduction=#{param2} where id=#{param1};")
     int setIntroduction(int id, String newIntroduction);

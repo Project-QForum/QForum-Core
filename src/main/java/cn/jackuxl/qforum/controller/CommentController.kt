@@ -1,7 +1,7 @@
 package cn.jackuxl.qforum.controller
 
+import cn.dev33.satoken.stp.StpUtil
 import cn.jackuxl.qforum.entity.Comment
-import cn.jackuxl.qforum.entity.User
 import cn.jackuxl.qforum.model.Result
 import cn.jackuxl.qforum.model.ResultEntity
 import cn.jackuxl.qforum.service.serviceimpl.CommentServiceImpl
@@ -29,13 +29,12 @@ class CommentController {
     lateinit var commentService: CommentServiceImpl
 
     @RequestMapping(value = ["/comment/post"], produces = ["application/json;charset=UTF-8"])
-    fun postComment(sessionId: String?, comment: Comment): ResultEntity<Comment> {
-        val user: User? = userService.getUserBySessionId(sessionId)
-        BasicUtil.assertTool(user != null && sessionId != null, "no_such_user")
+    fun postComment(comment: Comment): ResultEntity<Comment> {
+        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, "no_such_user")
         BasicUtil.assertTool(threadService.getThreadById(comment.threadId as Int) != null, "no_such_thread")
         BasicUtil.assertTool(comment.content?.isEmpty() == false, "content_cannot_be_empty")
 
-        comment.publisherId = user?.id
+        comment.publisherId = StpUtil.getLoginIdAsInt()
         comment.postTime = System.currentTimeMillis().toString()
         comment.up = false
 

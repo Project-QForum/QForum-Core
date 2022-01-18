@@ -1,5 +1,6 @@
 package cn.jackuxl.qforum.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.jackuxl.qforum.entity.User;
 import cn.jackuxl.qforum.model.Result;
 import cn.jackuxl.qforum.model.ResultEntity;
@@ -15,25 +16,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 @CrossOrigin
 @RestController
+@RequestMapping(value = "/user/", produces = "application/json;charset=UTF-8")
 public class UserController {
     @Autowired
     private UserServiceImpl userService;
     @Autowired
-    HttpServletResponse response;
-    @Autowired
-    HttpServletRequest request;
+    private HttpServletRequest request;
 
-    @RequestMapping(value = "/user/register", produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "register")
     public ResultEntity<Object> register(User user, Boolean md5) {
         if (md5 == null || !md5) {
-            user.setPassword(DigestUtils.md5DigestAsHex(user.getPassword().getBytes()));
+            user.setPassword(DigestUtils.md5DigestAsHex(Objects.requireNonNull(user.getPassword()).getBytes()));
         }
         Map<String, String> md5Info = generate(user.getPassword());
         user.setPassword(md5Info.get("result"));
@@ -43,14 +43,14 @@ public class UserController {
         user.setOfficial(null);
 
         BasicUtil.assertTool(userService.getUserByUserName(user.getUserName()) == null, "username_already_exists");
-        BasicUtil.assertTool(!user.getUserName().contains("@"), "username_cannot_contain_at");
+        BasicUtil.assertTool(!Objects.requireNonNull(user.getUserName()).contains("@"), "username_cannot_contain_at");
         BasicUtil.assertTool(userService.getUserByEmail(user.getEmail()) == null, "email_already_exists");
 
         BasicUtil.assertTool(userService.register(user) > 0, "unknown");
         return Result.INSTANCE.ok("success");
     }
 
-    @RequestMapping(value = "/user/login", produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "login")
     public ResultEntity<User> login(String userName, String password, Boolean md5) {
         if (md5 == null || !md5) {
             password = DigestUtils.md5DigestAsHex(password.getBytes());
@@ -70,10 +70,9 @@ public class UserController {
             e.printStackTrace();
         }
 
-        final String sessionId = getSessionId();
-        userService.setSessionId(user.getId(), sessionId);
+        StpUtil.login(user.getId());
 
-        user.setSessionId(sessionId);
+        user.setToken(StpUtil.getTokenValueByLoginId(user.getId()));
         user.setLastLoginIp(null);
         user.setPassword(null);
         user.setSalt(null);
@@ -81,46 +80,41 @@ public class UserController {
         return Result.INSTANCE.ok("success", user);
     }
 
-    @RequestMapping(value = "/user/logout", produces = "application/json;charset=UTF-8")
-    public ResultEntity<String> logout(String sessionId) {
-        User user = userService.getUserBySessionId(sessionId);
-        BasicUtil.assertTool(user != null, "no_such_user");
-        userService.setSessionId(user.getId(), null);
+    @RequestMapping(value = "logout")
+    public ResultEntity<String> logout(String token) {
+        StpUtil.logoutByTokenValue(token);
         return Result.INSTANCE.ok("success");
     }
 
-    @RequestMapping(value = "/user/setUserName", produces = "application/json;charset=UTF-8")
-    public ResultEntity<String> setUserName(String sessionId, String newName) {
-        User user = userService.getUserBySessionId(sessionId);
-        BasicUtil.assertTool(user != null && sessionId != null, "no_such_user");
+    @RequestMapping(value = "setUserName")
+    public ResultEntity<String> setUserName(String newName) {
+
+        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, "no_such_user");
         BasicUtil.assertTool(userService.getUserByUserName(newName) == null, "username_already_exists");
 
-        BasicUtil.assertTool(userService.setUserName(user.getId(), newName) > 0, "unknown");
+        BasicUtil.assertTool(userService.setUserName(StpUtil.getLoginIdAsInt(), newName) > 0, "unknown");
         return Result.INSTANCE.ok("success");
     }
 
-    @RequestMapping(value = "/user/setIntroduction", produces = "application/json;charset=UTF-8")
-    public ResultEntity<String> setIntroduction(String sessionId, String newIntroduction) {
-        User user = userService.getUserBySessionId(sessionId);
-        BasicUtil.assertTool(user != null && sessionId != null, "no_such_user");
-
-        BasicUtil.assertTool(userService.setIntroduction(user.getId(), newIntroduction) > 0, "unknown");
+    @RequestMapping(value = "setIntroduction")
+    public ResultEntity<String> setIntroduction(String newIntroduction) {
+        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, "no_such_user");
+        BasicUtil.assertTool(userService.setIntroduction(StpUtil.getLoginIdAsInt(), newIntroduction) > 0, "unknown");
         return Result.INSTANCE.ok("success");
     }
 
-    @RequestMapping(value = "/user/setAvatarUrl", produces = "application/json;charset=UTF-8")
-    public ResultEntity<String> setAvatarUrl(String sessionId, String newAvatarUrl) {
-        User user = userService.getUserBySessionId(sessionId);
-        BasicUtil.assertTool(user != null && sessionId != null, "no_such_user");
-
-        BasicUtil.assertTool(userService.setAvatarUrl(user.getId(), newAvatarUrl) > 0, "unknown");
+    @RequestMapping(value = "setAvatarUrl")
+    public ResultEntity<String> setAvatarUrl(String newAvatarUrl) {
+        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, "no_such_user");
+        BasicUtil.assertTool(userService.setAvatarUrl(StpUtil.getLoginIdAsInt(), newAvatarUrl) > 0, "unknown");
         return Result.INSTANCE.ok("success");
     }
 
-    @RequestMapping(value = "/user/setPassword", produces = "application/json;charset=UTF-8")
-    public ResultEntity<String> setPassword(String sessionId, String oldPassword, String newPassword, Boolean md5) {
-        User user = userService.getUserBySessionId(sessionId);
-        BasicUtil.assertTool(user != null && sessionId != null, "no_such_user");
+    @RequestMapping(value = "setPassword")
+    public ResultEntity<String> setPassword(String oldPassword, String newPassword, Boolean md5) {
+        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, "no_such_user");
+
+        User user = userService.getUserById(StpUtil.getLoginIdAsInt());
         if (md5 == null || !md5) {
             newPassword = DigestUtils.md5DigestAsHex(newPassword.getBytes());
             oldPassword = DigestUtils.md5DigestAsHex(oldPassword.getBytes());
@@ -133,14 +127,13 @@ public class UserController {
         return Result.INSTANCE.ok("success");
     }
 
-    @RequestMapping(value = "/user/checkLogin", produces = "application/json;charset=UTF-8")
-    public ResultEntity<String> checkLogin(String sessionId) {
-        User user = userService.getUserBySessionId(sessionId);
-        BasicUtil.assertTool(user != null, "no_such_user");
+    @RequestMapping(value = "checkLogin")
+    public ResultEntity<String> checkLogin() {
+        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, "no_such_user");
         return Result.INSTANCE.ok("success");
     }
 
-    @RequestMapping(value = "/user/getProfile", produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "getProfile")
     public ResultEntity<UserVo> getProfile(Integer id, String userName) {
         User user = null;
 
@@ -238,10 +231,6 @@ public class UserController {
         return new String(cs).equals(password_md5);
     }
 
-
-    private String getSessionId() {
-        return request.getSession().getId();
-    }
 
     public String getRemoteHost() {
 

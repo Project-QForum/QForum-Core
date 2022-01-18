@@ -17,7 +17,6 @@ public interface UserService {
 
     User getUserByEmail(String email);
 
-    User getUserBySessionId(String sessionId);
 
     int setUserName(int id, String newName);
 
@@ -27,7 +26,6 @@ public interface UserService {
 
     int setAvatarUrl(int id, String newAvatarUrl);
 
-    void setSessionId(int id, String newSessionId);
 
     void setLastLoginIp(int id, String lastLoginIp);
 }

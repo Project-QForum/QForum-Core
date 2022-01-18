@@ -1,7 +1,7 @@
 package cn.jackuxl.qforum.controller
 
+import cn.dev33.satoken.stp.StpUtil
 import cn.jackuxl.qforum.entity.Thread
-import cn.jackuxl.qforum.entity.Board
 import cn.jackuxl.qforum.exception.CustomException
 import cn.jackuxl.qforum.model.Result
 import cn.jackuxl.qforum.model.ResultEntity
@@ -31,13 +31,13 @@ class ThreadController {
     lateinit var boardService: BoardServiceImpl
 
     @RequestMapping(value = ["/thread/post"], produces = ["application/json;charset=UTF-8"])
-    fun postThread(sessionId: String?, thread: Thread): ResultEntity<Thread> {
-        val user = userService.getUserBySessionId(sessionId)
-        BasicUtil.assertTool(user != null && sessionId != null, "no_such_user")
+    fun postThread(thread: Thread): ResultEntity<Thread> {
+        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, "no_such_user")
+
         BasicUtil.assertTool(boardService.getBoardById(thread.boardId) != null, "no_such_board")
         BasicUtil.assertTool(!thread.title.isNullOrBlank(), "title_cannot_be_empty")
 
-        thread.publisherId = user.id
+        thread.publisherId = StpUtil.getLoginIdAsInt()
         thread.postTime = System.currentTimeMillis().toString()
         thread.likeList = "[]"
 
@@ -56,7 +56,7 @@ class ThreadController {
         BeanUtils.copyProperties(userService.getUserById(thread.publisherId), publisher)
 
         val data = ThreadVo(publisher = publisher, board = boardService.getBoardById(thread.boardId))
-        BeanUtils.copyProperties(thread, data);
+        BeanUtils.copyProperties(thread, data)
 
         if (data.likeList == "null") {
             data.likeList = "[]"
@@ -86,16 +86,15 @@ class ThreadController {
     val DISLIKE = 1
 
     @RequestMapping(value = ["/thread/like"], produces = ["application/json;charset=UTF-8"])
-    fun likeThread(@NonNull type: Int, @NonNull tid: Int, @NonNull sessionId: String?): ResultEntity<String?> {
-        val user = userService.getUserBySessionId(sessionId)
+    fun likeThread(@NonNull type: Int, @NonNull tid: Int): ResultEntity<String?> {
+        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, "no_such_user")
 
-        BasicUtil.assertTool(user != null, "no_such_user")
         when (type) {
             LIKE -> {
-                BasicUtil.assertTool(threadService.likeThread(tid, user.id) > 0, "unknown")
+                BasicUtil.assertTool(threadService.likeThread(tid, StpUtil.getLoginIdAsInt()) > 0, "unknown")
             }
             DISLIKE -> {
-                BasicUtil.assertTool(threadService.disLikeThread(tid, user.id) > 0, "unknown")
+                BasicUtil.assertTool(threadService.disLikeThread(tid, StpUtil.getLoginIdAsInt()) > 0, "unknown")
             }
             else -> {
                 throw CustomException(msg = "error_type")
