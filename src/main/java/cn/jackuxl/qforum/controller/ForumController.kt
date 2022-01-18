@@ -1,5 +1,6 @@
 package cn.jackuxl.qforum.controller
 
+import cn.jackuxl.qforum.constants.StaticProperty
 import cn.jackuxl.qforum.model.Result
 import cn.jackuxl.qforum.model.ResultEntity
 import com.alibaba.fastjson.JSON
@@ -11,10 +12,11 @@ import java.io.File
 
 @CrossOrigin
 @RestController
+@RequestMapping(value = ["/forum/"], produces = ["application/json;charset=UTF-8"])
 class ForumController {
-    @RequestMapping(value = ["/forum/info"], produces = ["application/json;charset=UTF-8"])
+    @RequestMapping(value = ["info"], produces = ["application/json;charset=UTF-8"])
     fun getForumInfo(tagId: Int?): ResultEntity<JSONObject> {
         val info = JSON.parseObject(File("config.json").readText())
-        return Result.ok("success", info)
+        return Result.ok(StaticProperty.SUCCESS, info)
     }
 }

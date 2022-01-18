@@ -1,6 +1,7 @@
 package cn.jackuxl.qforum.controller
 
 import cn.dev33.satoken.stp.StpUtil
+import cn.jackuxl.qforum.constants.StaticProperty
 import cn.jackuxl.qforum.entity.App
 import cn.jackuxl.qforum.model.Result
 import cn.jackuxl.qforum.model.ResultEntity
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @CrossOrigin
 @RestController
+@RequestMapping(value = ["/app/"], produces = ["application/json;charset=UTF-8"])
 class AppController {
     @Autowired
     lateinit var userService: UserServiceImpl
@@ -26,28 +28,28 @@ class AppController {
     @Autowired
     lateinit var tagService: TagServiceImpl
 
-    @RequestMapping(value = ["/app/post"], produces = ["application/json;charset=UTF-8"])
+    @RequestMapping(value = ["post"], produces = ["application/json;charset=UTF-8"])
     fun postApp(app: App): ResultEntity<App> {
-        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, "no_such_user")
+        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, StaticProperty.NO_SUCH_USER)
         app.postTime = System.currentTimeMillis().toString()
         app.publisherId = StpUtil.getLoginIdAsInt()
 
         // Check the data
-        BasicUtil.assertTool(!app.name.isNullOrBlank(), "name_cannot_be_empty")
-        BasicUtil.assertTool(app.packageName != null, "packageName_cannot_be_empty")
-        BasicUtil.assertTool(tagService.getTagById(app.tagId) != null, "no_such_tag")
+        BasicUtil.assertTool(!app.name.isNullOrBlank(), StaticProperty.NAME_CANNOT_BE_EMPTY)
+        BasicUtil.assertTool(app.packageName != null, StaticProperty.PACKAGE_NAME_CANNOT_BE_EMPTY)
+        BasicUtil.assertTool(tagService.getTagById(app.tagId) != null, StaticProperty.NO_SUCH_TAG)
         BasicUtil.assertTool(
             appService.getAppByPackageName(app.packageName as String) == null,
-            "packageName_already_exists"
+            StaticProperty.PACKAGE_NAME_ALREADY_EXISTS
         )
-        BasicUtil.assertTool(appService.postApp(app) > 0, "unknown")
 
         // Operate and return the result
+        BasicUtil.assertTool(appService.postApp(app) > 0, StaticProperty.UNKNOWN)
         val apps = appService.listApps().reversed()
-        return Result.ok("success", apps[apps.size - 1])
+        return Result.ok(StaticProperty.SUCCESS, apps[apps.size - 1])
     }
 
-    @RequestMapping(value = ["/app/list"], produces = ["application/json;charset=UTF-8"])
+    @RequestMapping(value = ["list"], produces = ["application/json;charset=UTF-8"])
     fun listApp(tagId:Int?): ResultEntity<MutableList<AppVo>> {
         val apps:List<App> = if(tagId==null){
             appService.listApps()
@@ -69,10 +71,10 @@ class AppController {
 
             data.add(app)
         }
-        return Result.ok("success",data)
+        return Result.ok(StaticProperty.SUCCESS, data)
     }
 
-    @RequestMapping(value = ["/app/getAppDetail"], produces = ["application/json;charset=UTF-8"])
+    @RequestMapping(value = ["getAppDetail"], produces = ["application/json;charset=UTF-8"])
     fun getThreadDetail(packageName: String): ResultEntity<AppVo> {
 
         val app = appService.getAppByPackageName(packageName)
@@ -86,6 +88,6 @@ class AppController {
         appVo.publisher = publisher
         appVo.tag = tagService.getTagById(app.tagId)
 
-        return Result.ok("success",appVo)
+        return Result.ok(StaticProperty.SUCCESS, appVo)
     }
 }

@@ -1,5 +1,6 @@
 package cn.jackuxl.qforum.controller
 
+import cn.jackuxl.qforum.constants.StaticProperty
 import cn.jackuxl.qforum.model.Result
 import cn.jackuxl.qforum.model.ResultEntity
 import cn.jackuxl.qforum.service.serviceimpl.UserServiceImpl
@@ -45,7 +46,7 @@ class FileController {
 
         val map =
             mapOf("url" to "http://${request.serverName}:${request.serverPort}/upload/images/${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}/${img.name}")
-        return Result.ok("success", map)
+        return Result.ok(StaticProperty.SUCCESS, map)
     }
 
     @RequestMapping(value = ["/apk/upload"], produces = ["application/json;charset=UTF-8"])
@@ -61,7 +62,7 @@ class FileController {
 
         val map =
             mapOf("url" to "http://${request.serverName}:${request.serverPort}/upload/apks/${LocalDate.now().year}/${LocalDate.now().monthValue}/${LocalDate.now().dayOfMonth}/${img.name}")
-        return Result.ok("success", map)
+        return Result.ok(StaticProperty.SUCCESS, map)
     }
 
     @RequestMapping(

@@ -1,6 +1,7 @@
 package cn.jackuxl.qforum.controller
 
 import cn.dev33.satoken.stp.StpUtil
+import cn.jackuxl.qforum.constants.StaticProperty
 import cn.jackuxl.qforum.entity.Comment
 import cn.jackuxl.qforum.model.Result
 import cn.jackuxl.qforum.model.ResultEntity
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @CrossOrigin
 @RestController
+@RequestMapping(value = ["/comment/"], produces = ["application/json;charset=UTF-8"])
 class CommentController {
     @Autowired
     lateinit var userService: UserServiceImpl
@@ -28,26 +30,29 @@ class CommentController {
     @Autowired
     lateinit var commentService: CommentServiceImpl
 
-    @RequestMapping(value = ["/comment/post"], produces = ["application/json;charset=UTF-8"])
+    @RequestMapping(value = ["post"], produces = ["application/json;charset=UTF-8"])
     fun postComment(comment: Comment): ResultEntity<Comment> {
-        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, "no_such_user")
-        BasicUtil.assertTool(threadService.getThreadById(comment.threadId as Int) != null, "no_such_thread")
+        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, StaticProperty.NO_SUCH_USER)
+        BasicUtil.assertTool(
+            threadService.getThreadById(comment.threadId as Int) != null,
+            StaticProperty.NO_SUCH_THREAD
+        )
         BasicUtil.assertTool(comment.content?.isEmpty() == false, "content_cannot_be_empty")
 
         comment.publisherId = StpUtil.getLoginIdAsInt()
         comment.postTime = System.currentTimeMillis().toString()
         comment.up = false
 
-        BasicUtil.assertTool(commentService.postComment(comment) > 0, "unknown")
+        BasicUtil.assertTool(commentService.postComment(comment) > 0, StaticProperty.UNKNOWN)
 
         val comments = commentService.listComments(comment.threadId as Int)
 
-        return Result.ok("success", comments[comments.size - 1])
+        return Result.ok(StaticProperty.SUCCESS, comments[comments.size - 1])
     }
 
-    @RequestMapping(value = ["/comment/list"], produces = ["application/json;charset=UTF-8"])
+    @RequestMapping(value = ["list"], produces = ["application/json;charset=UTF-8"])
     fun listComments(threadId: Int): ResultEntity<MutableList<CommentVo>> {
-        BasicUtil.assertTool(threadService.getThreadById(threadId) != null, "no_such_thread")
+        BasicUtil.assertTool(threadService.getThreadById(threadId) != null, StaticProperty.NO_SUCH_THREAD)
 
         val comments = commentService.listComments(threadId)
         val data = mutableListOf<CommentVo>()
@@ -61,7 +66,7 @@ class CommentController {
 
             data.add(comment)
         }
-        return Result.ok("success", data)
+        return Result.ok(StaticProperty.SUCCESS, data)
     }
 
 }

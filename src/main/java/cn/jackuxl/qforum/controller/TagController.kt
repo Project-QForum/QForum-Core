@@ -1,6 +1,7 @@
 package cn.jackuxl.qforum.controller
 
 import cn.dev33.satoken.stp.StpUtil
+import cn.jackuxl.qforum.constants.StaticProperty
 import cn.jackuxl.qforum.entity.Tag
 import cn.jackuxl.qforum.model.Result
 import cn.jackuxl.qforum.model.ResultEntity
@@ -19,15 +20,15 @@ class TagController {
 
     @RequestMapping(value = ["/admin/addTag"], produces = ["application/json;charset=UTF-8"])
     fun addBoard(tag: Tag): ResultEntity<String?> {
-        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, "no_such_user")
-        BasicUtil.assertTool(StpUtil.hasRole("admin"), "no_such_admin")
-        BasicUtil.assertTool(tagService.addTag(tag) > 0, "unknown")
+        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, StaticProperty.NO_SUCH_USER)
+        BasicUtil.assertTool(StpUtil.hasRole("admin"), StaticProperty.NO_SUCH_ADMIN)
+        BasicUtil.assertTool(tagService.addTag(tag) > 0, StaticProperty.UNKNOWN)
 
-        return Result.ok("success")
+        return Result.ok(StaticProperty.SUCCESS)
     }
 
     @RequestMapping(value = ["/tag/list"], produces = ["application/json;charset=UTF-8"])
     fun listTags(): ResultEntity<List<Tag>> {
-        return Result.ok("success", tagService.listTags())
+        return Result.ok(StaticProperty.SUCCESS, tagService.listTags())
     }
 }

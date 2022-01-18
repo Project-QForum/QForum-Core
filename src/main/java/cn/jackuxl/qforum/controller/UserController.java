@@ -1,6 +1,7 @@
 package cn.jackuxl.qforum.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import cn.jackuxl.qforum.constants.StaticProperty;
 import cn.jackuxl.qforum.entity.User;
 import cn.jackuxl.qforum.model.Result;
 import cn.jackuxl.qforum.model.ResultEntity;
@@ -42,12 +43,12 @@ public class UserController {
         user.setAdmin(false);
         user.setOfficial(null);
 
-        BasicUtil.assertTool(userService.getUserByUserName(user.getUserName()) == null, "username_already_exists");
-        BasicUtil.assertTool(!Objects.requireNonNull(user.getUserName()).contains("@"), "username_cannot_contain_at");
-        BasicUtil.assertTool(userService.getUserByEmail(user.getEmail()) == null, "email_already_exists");
+        BasicUtil.assertTool(userService.getUserByUserName(user.getUserName()) == null, StaticProperty.USERNAME_ALREADY_EXISTS);
+        BasicUtil.assertTool(!Objects.requireNonNull(user.getUserName()).contains("@"), StaticProperty.USERNAME_CANNOT_CONTAIN_AT);
+        BasicUtil.assertTool(userService.getUserByEmail(user.getEmail()) == null, StaticProperty.EMAIL_ALREADY_EXISTS);
 
-        BasicUtil.assertTool(userService.register(user) > 0, "unknown");
-        return Result.INSTANCE.ok("success");
+        BasicUtil.assertTool(userService.register(user) > 0, StaticProperty.UNKNOWN);
+        return Result.INSTANCE.ok(StaticProperty.SUCCESS);
     }
 
     @RequestMapping(value = "login")
@@ -61,8 +62,8 @@ public class UserController {
         } else if (userService.getUserByUserName(userName) != null) {
             user = userService.getUserByUserName(userName);
         }
-        BasicUtil.assertTool(user != null, "no_such_user");
-        BasicUtil.assertTool(verifyPassword(password, user.getPassword(), user.getSalt()), "password_mismatch");
+        BasicUtil.assertTool(user != null, StaticProperty.NO_SUCH_USER);
+        BasicUtil.assertTool(verifyPassword(password, user.getPassword(), user.getSalt()), StaticProperty.PASSWORD_MISMATCH);
 
         try {
             userService.setLastLoginIp(user.getId(), getRemoteHost());
@@ -77,60 +78,60 @@ public class UserController {
         user.setPassword(null);
         user.setSalt(null);
 
-        return Result.INSTANCE.ok("success", user);
+        return Result.INSTANCE.ok(StaticProperty.SUCCESS, user);
     }
 
     @RequestMapping(value = "logout")
     public ResultEntity<String> logout(String token) {
         StpUtil.logoutByTokenValue(token);
-        return Result.INSTANCE.ok("success");
+        return Result.INSTANCE.ok(StaticProperty.SUCCESS);
     }
 
     @RequestMapping(value = "setUserName")
     public ResultEntity<String> setUserName(String newName) {
 
-        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, "no_such_user");
-        BasicUtil.assertTool(userService.getUserByUserName(newName) == null, "username_already_exists");
+        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, StaticProperty.NO_SUCH_USER);
+        BasicUtil.assertTool(userService.getUserByUserName(newName) == null, StaticProperty.USERNAME_ALREADY_EXISTS);
 
-        BasicUtil.assertTool(userService.setUserName(StpUtil.getLoginIdAsInt(), newName) > 0, "unknown");
-        return Result.INSTANCE.ok("success");
+        BasicUtil.assertTool(userService.setUserName(StpUtil.getLoginIdAsInt(), newName) > 0, StaticProperty.UNKNOWN);
+        return Result.INSTANCE.ok(StaticProperty.SUCCESS);
     }
 
     @RequestMapping(value = "setIntroduction")
     public ResultEntity<String> setIntroduction(String newIntroduction) {
-        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, "no_such_user");
-        BasicUtil.assertTool(userService.setIntroduction(StpUtil.getLoginIdAsInt(), newIntroduction) > 0, "unknown");
-        return Result.INSTANCE.ok("success");
+        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, StaticProperty.NO_SUCH_USER);
+        BasicUtil.assertTool(userService.setIntroduction(StpUtil.getLoginIdAsInt(), newIntroduction) > 0, StaticProperty.UNKNOWN);
+        return Result.INSTANCE.ok(StaticProperty.SUCCESS);
     }
 
     @RequestMapping(value = "setAvatarUrl")
     public ResultEntity<String> setAvatarUrl(String newAvatarUrl) {
-        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, "no_such_user");
-        BasicUtil.assertTool(userService.setAvatarUrl(StpUtil.getLoginIdAsInt(), newAvatarUrl) > 0, "unknown");
-        return Result.INSTANCE.ok("success");
+        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, StaticProperty.NO_SUCH_USER);
+        BasicUtil.assertTool(userService.setAvatarUrl(StpUtil.getLoginIdAsInt(), newAvatarUrl) > 0, StaticProperty.UNKNOWN);
+        return Result.INSTANCE.ok(StaticProperty.SUCCESS);
     }
 
     @RequestMapping(value = "setPassword")
     public ResultEntity<String> setPassword(String oldPassword, String newPassword, Boolean md5) {
-        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, "no_such_user");
+        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, StaticProperty.NO_SUCH_USER);
 
         User user = userService.getUserById(StpUtil.getLoginIdAsInt());
         if (md5 == null || !md5) {
             newPassword = DigestUtils.md5DigestAsHex(newPassword.getBytes());
             oldPassword = DigestUtils.md5DigestAsHex(oldPassword.getBytes());
         }
-        BasicUtil.assertTool(verifyPassword(oldPassword, user.getPassword(), user.getSalt()), "password_mismatch");
+        BasicUtil.assertTool(verifyPassword(oldPassword, user.getPassword(), user.getSalt()), StaticProperty.PASSWORD_MISMATCH);
         newPassword = generate(newPassword, user.getSalt());
 
-        BasicUtil.assertTool(userService.setPassword(user.getId(), newPassword) > 0, "unknown");
+        BasicUtil.assertTool(userService.setPassword(user.getId(), newPassword) > 0, StaticProperty.UNKNOWN);
 
-        return Result.INSTANCE.ok("success");
+        return Result.INSTANCE.ok(StaticProperty.SUCCESS);
     }
 
     @RequestMapping(value = "checkLogin")
     public ResultEntity<String> checkLogin() {
-        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, "no_such_user");
-        return Result.INSTANCE.ok("success");
+        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, StaticProperty.NO_SUCH_USER);
+        return Result.INSTANCE.ok(StaticProperty.SUCCESS);
     }
 
     @RequestMapping(value = "getProfile")
@@ -143,12 +144,12 @@ public class UserController {
             user = userService.getUserByUserName(userName);
         }
 
-        BasicUtil.assertTool(user != null, "no_such_user");
+        BasicUtil.assertTool(user != null, StaticProperty.NO_SUCH_USER);
 
         UserVo userVo = new UserVo();
         BeanUtils.copyProperties(user, userVo);
 
-        return Result.INSTANCE.ok("success", userVo);
+        return Result.INSTANCE.ok(StaticProperty.SUCCESS, userVo);
     }
 
     /**
@@ -236,11 +237,11 @@ public class UserController {
 
         String ip = request.getHeader("X-Forwarded-For");
 
-        if (ObjectUtils.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
+        if (ObjectUtils.isEmpty(ip) || StaticProperty.UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getHeader("X-Real-IP");
         }
 
-        if (ObjectUtils.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
+        if (ObjectUtils.isEmpty(ip) || StaticProperty.UNKNOWN.equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
 
