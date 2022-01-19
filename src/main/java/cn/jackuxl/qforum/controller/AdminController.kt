@@ -24,20 +24,22 @@ class AdminController {
     @Autowired
     lateinit var tagService: TagServiceImpl
 
-    @RequestMapping(value = ["addBoard"])
-    fun addBoard(board: Board?): ResultEntity<String?>? {
+    fun checkPermission() {
         BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER)
         BasicUtil.assertTool(StpUtil.hasRole("admin"), StaticProperty.NO_SUCH_ADMIN)
+    }
+
+    @RequestMapping(value = ["addBoard"])
+    fun addBoard(board: Board?): ResultEntity<String?>? {
+        checkPermission()
         BasicUtil.assertTool(boardService.addBoard(board) > 0, StaticProperty.UNKNOWN)
         return Result.ok(StaticProperty.SUCCESS)
     }
 
     @RequestMapping(value = ["addTag"], produces = ["application/json;charset=UTF-8"])
     fun addBoard(tag: Tag): ResultEntity<String?> {
-        BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER)
-        BasicUtil.assertTool(StpUtil.hasRole("admin"), StaticProperty.NO_SUCH_ADMIN)
+        checkPermission()
         BasicUtil.assertTool(tagService.addTag(tag) > 0, StaticProperty.UNKNOWN)
-
         return Result.ok(StaticProperty.SUCCESS)
     }
 }
