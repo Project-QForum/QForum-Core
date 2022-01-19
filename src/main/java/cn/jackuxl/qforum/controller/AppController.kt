@@ -30,7 +30,7 @@ class AppController {
 
     @RequestMapping(value = ["post"], produces = ["application/json;charset=UTF-8"])
     fun postApp(app: App): ResultEntity<App> {
-        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, StaticProperty.NO_SUCH_USER)
+        BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER)
         app.postTime = System.currentTimeMillis().toString()
         app.publisherId = StpUtil.getLoginIdAsInt()
 

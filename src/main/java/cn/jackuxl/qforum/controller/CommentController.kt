@@ -32,7 +32,7 @@ class CommentController {
 
     @RequestMapping(value = ["post"], produces = ["application/json;charset=UTF-8"])
     fun postComment(comment: Comment): ResultEntity<Comment> {
-        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, StaticProperty.NO_SUCH_USER)
+        BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER)
         BasicUtil.assertTool(
             threadService.getThreadById(comment.threadId as Int) != null,
             StaticProperty.NO_SUCH_THREAD

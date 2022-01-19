@@ -30,9 +30,11 @@ public class ThreadServiceImpl implements ThreadService {
     public List<Thread> listThreads(int boardId) {
         List<Thread> threads = threadMapper.listThreads(boardId);
         for (Thread thread : threads) {
-            if (Objects.equals(thread.getLikeList(), "null") || thread.getLikeList() == null) {
+            if (Objects.equals(thread.getLikeList(), "null")) {
                 threadMapper.updateLikeList(thread.getId(), "[]");
                 thread.setLikeList("[]");
+            } else {
+                thread.getLikeList();
             }
         }
         return threads;
@@ -41,10 +43,8 @@ public class ThreadServiceImpl implements ThreadService {
     @Override
     public int likeThread(int tid, int uid) {
         JSONArray likeList = JSON.parseArray(threadMapper.getThreadById(tid).getLikeList());
-        for (int i = 0; i < likeList.size(); i++) {
-            if (likeList.getInteger(i) == uid) {
-                return 0;
-            }
+        if (likeList.contains(uid)) {
+            return 0;
         }
         likeList.add(uid);
         return threadMapper.updateLikeList(tid, likeList.toJSONString());
@@ -53,11 +53,7 @@ public class ThreadServiceImpl implements ThreadService {
     @Override
     public int disLikeThread(int tid, int uid) {
         JSONArray likeList = JSON.parseArray(threadMapper.getThreadById(tid).getLikeList());
-        for (int i = 0; i < likeList.size(); i++) {
-            if (likeList.getInteger(i) == uid) {
-                likeList.remove(i);
-            }
-        }
+        likeList.removeIf(o -> Integer.parseInt(o.toString()) == uid);
         return threadMapper.updateLikeList(tid, likeList.toJSONString());
     }
 }

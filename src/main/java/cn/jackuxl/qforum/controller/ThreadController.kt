@@ -34,7 +34,7 @@ class ThreadController {
 
     @RequestMapping(value = ["post"], produces = ["application/json;charset=UTF-8"])
     fun postThread(thread: Thread): ResultEntity<Thread> {
-        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, StaticProperty.NO_SUCH_USER)
+        BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER)
 
         BasicUtil.assertTool(boardService.getBoardById(thread.boardId) != null, StaticProperty.NO_SUCH_THREAD)
         BasicUtil.assertTool(!thread.title.isNullOrBlank(), "title_cannot_be_empty")
@@ -89,7 +89,7 @@ class ThreadController {
 
     @RequestMapping(value = ["like"], produces = ["application/json;charset=UTF-8"])
     fun likeThread(@NonNull type: Int, @NonNull tid: Int): ResultEntity<String?> {
-        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, StaticProperty.NO_SUCH_USER)
+        BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER)
 
         when (type) {
             LIKE -> {

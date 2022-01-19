@@ -9,9 +9,4 @@ data class Thread(
     var content: String? = null,
     var boardId: Int = 0,
     var likeList: String = "[]"
-) {
-
-    constructor() : this(0, null, 0, 0, null, null, 0, "[]")
-
-
-}
+)

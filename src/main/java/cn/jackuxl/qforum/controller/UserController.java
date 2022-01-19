@@ -90,7 +90,7 @@ public class UserController {
     @RequestMapping(value = "setUserName")
     public ResultEntity<String> setUserName(String newName) {
 
-        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, StaticProperty.NO_SUCH_USER);
+        BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER);
         BasicUtil.assertTool(userService.getUserByUserName(newName) == null, StaticProperty.USERNAME_ALREADY_EXISTS);
 
         BasicUtil.assertTool(userService.setUserName(StpUtil.getLoginIdAsInt(), newName) > 0, StaticProperty.UNKNOWN);
@@ -99,21 +99,21 @@ public class UserController {
 
     @RequestMapping(value = "setIntroduction")
     public ResultEntity<String> setIntroduction(String newIntroduction) {
-        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, StaticProperty.NO_SUCH_USER);
+        BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER);
         BasicUtil.assertTool(userService.setIntroduction(StpUtil.getLoginIdAsInt(), newIntroduction) > 0, StaticProperty.UNKNOWN);
         return Result.INSTANCE.ok(StaticProperty.SUCCESS);
     }
 
     @RequestMapping(value = "setAvatarUrl")
     public ResultEntity<String> setAvatarUrl(String newAvatarUrl) {
-        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, StaticProperty.NO_SUCH_USER);
+        BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER);
         BasicUtil.assertTool(userService.setAvatarUrl(StpUtil.getLoginIdAsInt(), newAvatarUrl) > 0, StaticProperty.UNKNOWN);
         return Result.INSTANCE.ok(StaticProperty.SUCCESS);
     }
 
     @RequestMapping(value = "setPassword")
     public ResultEntity<String> setPassword(String oldPassword, String newPassword, Boolean md5) {
-        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, StaticProperty.NO_SUCH_USER);
+        BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER);
 
         User user = userService.getUserById(StpUtil.getLoginIdAsInt());
         if (md5 == null || !md5) {
@@ -130,7 +130,7 @@ public class UserController {
 
     @RequestMapping(value = "checkLogin")
     public ResultEntity<String> checkLogin() {
-        BasicUtil.assertTool(StpUtil.isLogin() && StpUtil.getLoginId() != null, StaticProperty.NO_SUCH_USER);
+        BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER);
         return Result.INSTANCE.ok(StaticProperty.SUCCESS);
     }
 

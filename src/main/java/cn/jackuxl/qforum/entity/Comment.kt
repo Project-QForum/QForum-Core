@@ -7,6 +7,4 @@ data class Comment(
     var publisherId: Int?,
     var content: String?,
     var threadId: Int?
-) {
-    constructor() : this(null, null, false, null, null, null)
-}
+)
