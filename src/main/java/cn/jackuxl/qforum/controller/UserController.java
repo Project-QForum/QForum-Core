@@ -1,5 +1,6 @@
 package cn.jackuxl.qforum.controller;
 
+import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.jackuxl.qforum.constants.StaticProperty;
 import cn.jackuxl.qforum.entity.User;
@@ -10,15 +11,12 @@ import cn.jackuxl.qforum.util.BasicUtil;
 import cn.jackuxl.qforum.vo.UserVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.DigestUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
@@ -34,11 +32,11 @@ public class UserController {
     @RequestMapping(value = "register")
     public ResultEntity<Object> register(User user, Boolean md5) {
         if (md5 == null || !md5) {
-            user.setPassword(DigestUtils.md5DigestAsHex(Objects.requireNonNull(user.getPassword()).getBytes()));
+            user.setPassword(SaSecureUtil.md5(user.getPassword()));
         }
-        Map<String, String> md5Info = generate(user.getPassword());
-        user.setPassword(md5Info.get("result"));
-        user.setSalt(md5Info.get("salt"));
+
+        user.setSalt(randomSalt());
+        user.setPassword(SaSecureUtil.md5BySalt(user.getPassword(), user.getSalt()));
         user.setLastLoginIp(getRemoteHost());
         user.setAdmin(false);
         user.setOfficial(null);
@@ -54,7 +52,7 @@ public class UserController {
     @RequestMapping(value = "login")
     public ResultEntity<User> login(String userName, String password, Boolean md5) {
         if (md5 == null || !md5) {
-            password = DigestUtils.md5DigestAsHex(password.getBytes());
+            password = SaSecureUtil.md5(password);
         }
         User user = null;
         if (userName.contains("@")) {
@@ -77,6 +75,7 @@ public class UserController {
         user.setLastLoginIp(null);
         user.setPassword(null);
         user.setSalt(null);
+
 
         return Result.INSTANCE.ok(StaticProperty.SUCCESS, user);
     }
@@ -117,11 +116,11 @@ public class UserController {
 
         User user = userService.getUserById(StpUtil.getLoginIdAsInt());
         if (md5 == null || !md5) {
-            newPassword = DigestUtils.md5DigestAsHex(newPassword.getBytes());
-            oldPassword = DigestUtils.md5DigestAsHex(oldPassword.getBytes());
+            newPassword = SaSecureUtil.md5(newPassword);
+            oldPassword = SaSecureUtil.md5(oldPassword);
         }
         BasicUtil.assertTool(verifyPassword(oldPassword, user.getPassword(), user.getSalt()), StaticProperty.PASSWORD_MISMATCH);
-        newPassword = generate(newPassword, user.getSalt());
+        newPassword = SaSecureUtil.md5BySalt(newPassword, user.getSalt());
 
         BasicUtil.assertTool(userService.setPassword(user.getId(), newPassword) > 0, StaticProperty.UNKNOWN);
 
@@ -153,60 +152,6 @@ public class UserController {
     }
 
     /**
-     * 加盐MD5
-     *
-     * @param password 密码
-     * @return 结果，盐
-     */
-    public static Map<String, String> generate(String password) {
-        Random r = new Random();
-        StringBuilder sb = new StringBuilder(16);
-        sb.append(r.nextInt(99999999)).append(r.nextInt(99999999));
-        int len = sb.length();
-        if (len < 16) {
-            sb.append("0".repeat(Math.max(0, 16 - len)));
-        }
-        String salt = sb.toString();
-        password = DigestUtils.md5DigestAsHex((password + salt).getBytes());
-        char[] cs = new char[48];
-        for (int i = 0; i < 48; i += 3) {
-            cs[i] = password.charAt(i / 3 * 2);
-            char c = salt.charAt(i / 3);
-            cs[i + 1] = c;
-            cs[i + 2] = password.charAt(i / 3 * 2 + 1);
-        }
-        Map<String, String> result = new HashMap<>();
-        result.put("result", new String(cs));
-        result.put("salt", salt);
-        return result;
-    }
-
-    /**
-     * 加盐MD5
-     *
-     * @param password 密码
-     * @return 结果
-     */
-    public static String generate(String password, String salt) {
-        Random r = new Random();
-        StringBuilder sb = new StringBuilder(16);
-        sb.append(r.nextInt(99999999)).append(r.nextInt(99999999));
-        int len = sb.length();
-        if (len < 16) {
-            sb.append("0".repeat(Math.max(0, 16 - len)));
-        }
-        password = DigestUtils.md5DigestAsHex((password + salt).getBytes());
-        char[] cs = new char[48];
-        for (int i = 0; i < 48; i += 3) {
-            cs[i] = password.charAt(i / 3 * 2);
-            char c = salt.charAt(i / 3);
-            cs[i + 1] = c;
-            cs[i + 2] = password.charAt(i / 3 * 2 + 1);
-        }
-        return new String(cs);
-    }
-
-    /**
      * 校验MD5
      *
      * @param password 密码
@@ -214,24 +159,24 @@ public class UserController {
      * @return 结果
      */
     public static boolean verifyPassword(String password, String password_md5, String salt) {
-        Random r = new Random();
-        StringBuilder sb = new StringBuilder(16);
-        sb.append(r.nextInt(99999999)).append(r.nextInt(99999999));
-        int len = sb.length();
-        if (len < 16) {
-            sb.append("0".repeat(Math.max(0, 16 - len)));
-        }
-        password = DigestUtils.md5DigestAsHex((password + salt).getBytes());
-        char[] cs = new char[48];
-        for (int i = 0; i < 48; i += 3) {
-            cs[i] = password.charAt(i / 3 * 2);
-            char c = salt.charAt(i / 3);
-            cs[i + 1] = c;
-            cs[i + 2] = password.charAt(i / 3 * 2 + 1);
-        }
-        return new String(cs).equals(password_md5);
+        return SaSecureUtil.md5BySalt(password, salt).equals(password_md5);
     }
 
+    private final static String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    /**
+     * 生成盐
+     *
+     * @return salt
+     */
+    public static String randomSalt() {
+        StringBuilder uuid = new StringBuilder();
+        for (int i = 0; i < 4; i++) {
+            char ch = str.charAt(new Random().nextInt(str.length()));
+            uuid.append(ch);
+        }
+        return uuid.toString();
+    }
 
     public String getRemoteHost() {
 
