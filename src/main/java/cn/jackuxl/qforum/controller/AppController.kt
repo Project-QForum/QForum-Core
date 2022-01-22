@@ -29,7 +29,7 @@ class AppController {
     lateinit var tagService: TagServiceImpl
 
     @RequestMapping(value = ["post"], produces = ["application/json;charset=UTF-8"])
-    fun postApp(app: App): ResultEntity<App> {
+    fun postApp(app: App): ResultEntity<AppVo> {
         BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER)
         app.postTime = System.currentTimeMillis().toString()
         app.publisherId = StpUtil.getLoginIdAsInt()
@@ -46,7 +46,14 @@ class AppController {
         // Operate and return the result
         BasicUtil.assertTool(appService.postApp(app) > 0, StaticProperty.UNKNOWN)
         val apps = appService.listApps().reversed()
-        return Result.ok(StaticProperty.SUCCESS, apps[apps.size - 1])
+
+        val publisher = UserVo()
+        BeanUtils.copyProperties(userService.getUserById(app.publisherId ?: 0), publisher)
+
+        val data = AppVo(publisher = publisher, tag = tagService.getTagById(app.tagId))
+        BeanUtils.copyProperties(apps.last(), data)
+
+        return Result.ok(StaticProperty.SUCCESS, data)
     }
 
     @RequestMapping(value = ["list"], produces = ["application/json;charset=UTF-8"])

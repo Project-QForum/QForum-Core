@@ -33,7 +33,7 @@ class ThreadController {
     lateinit var boardService: BoardServiceImpl
 
     @RequestMapping(value = ["post"], produces = ["application/json;charset=UTF-8"])
-    fun postThread(thread: Thread): ResultEntity<Thread> {
+    fun postThread(thread: Thread): ResultEntity<ThreadVo> {
         BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER)
 
         BasicUtil.assertTool(boardService.getBoardById(thread.boardId) != null, StaticProperty.NO_SUCH_THREAD)
@@ -46,7 +46,14 @@ class ThreadController {
         BasicUtil.assertTool(threadService.postThread(thread) > 0, StaticProperty.UNKNOWN)
 
         val threads = threadService.listThreads(thread.boardId)
-        return Result.ok(StaticProperty.SUCCESS, threads[threads.size - 1])
+
+        val publisher = UserVo()
+        BeanUtils.copyProperties(userService.getUserById(thread.publisherId), publisher)
+
+        val data = ThreadVo(publisher = publisher, board = boardService.getBoardById(thread.boardId))
+        BeanUtils.copyProperties(threads.last(), data)
+
+        return Result.ok(StaticProperty.SUCCESS, data)
     }
 
     @RequestMapping(value = ["getThreadDetail"], produces = ["application/json;charset=UTF-8"])

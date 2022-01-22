@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 
 @Component
 interface TagMapper {
-    @Insert("insert into qf_tag(id,name,type) values(#{id},#{name},#{type})")
+    @Insert("insert into qf_tag(id,name,priorityLevel,type) values(#{id},#{name},#{priorityLevel},#{type})")
     fun addTag(tag: Tag): Int
 
     @Select("select * from qf_tag where id=#{param1};")
