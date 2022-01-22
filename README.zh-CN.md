@@ -10,11 +10,12 @@ QForum-Core 是 [QForum](https://github.com/Project-QForum/QForum) 的官方核�
 
 #### 搭建论坛
 
-请在运行本项目的同时运行一个前端界面以便和用户交互，您可以在 [项目索引](https://github.com/Project-QForum/QForum) 寻找自己喜爱的论坛前端，或使用 [官方前端](https://github.com/Project-QForum/QForum-MaterialTheme)。
+请在运行本项目的同时运行一个前端界面以便和用户交互，您可以在 [项目索引](https://github.com/Project-QForum/QForum)
+寻找自己喜爱的论坛前端，或使用 [官方前端](https://github.com/Project-QForum/QForum-Web-MaterialDesign)。
 
 #### 开发
 
-请参阅 [Wiki](https://github.com/Project-QForum/QForum-Core/wiki/%E5%BC%80%E6%94%BE%E6%8E%A5%E5%8F%A3-API)
+请参阅 [Wiki](https://www.apifox.cn/apidoc/shared-8d577937-f01d-4d25-8e8d-627d15309475)
 
 您可以使用其 API 来制作论坛客户端、前端页面或其他程序。
 
