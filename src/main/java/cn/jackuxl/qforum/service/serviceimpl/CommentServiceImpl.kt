@@ -15,6 +15,14 @@ class CommentServiceImpl : CommentService {
         return commentMapper.postComment(comment)
     }
 
+    override fun getCommentById(id: Int): Comment? {
+        return commentMapper.getCommentById(id)
+    }
+
+    override fun upComment(id: Int, up: Int): Int {
+        return commentMapper.upComment(id, up)
+    }
+
     override fun listComments(threadId: Int): List<Comment> {
         return commentMapper.listComments(threadId)
     }

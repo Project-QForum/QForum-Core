@@ -13,6 +13,6 @@ interface TagMapper {
     @Select("select * from qf_tag where id=#{param1};")
     fun getTagById(id: Int): Tag?
 
-    @Select("select * from qf_tag order by id desc")
+    @Select("select * from qf_tag order by id asc")
     fun listTags(): List<Tag>
 }

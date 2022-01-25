@@ -45,13 +45,12 @@ class AppController {
 
         // Operate and return the result
         BasicUtil.assertTool(appService.postApp(app) > 0, StaticProperty.UNKNOWN)
-        val apps = appService.listApps().reversed()
 
         val publisher = UserVo()
         BeanUtils.copyProperties(userService.getUserById(app.publisherId ?: 0), publisher)
 
         val data = AppVo(publisher = publisher, tag = tagService.getTagById(app.tagId))
-        BeanUtils.copyProperties(apps.last(), data)
+        BeanUtils.copyProperties(appService.listApps().last(), data)
 
         return Result.ok(StaticProperty.SUCCESS, data)
     }

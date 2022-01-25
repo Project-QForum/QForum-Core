@@ -27,6 +27,11 @@ public class ThreadServiceImpl implements ThreadService {
     }
 
     @Override
+    public int deleteThreadById(int id) {
+        return threadMapper.deleteThreadById(id);
+    }
+
+    @Override
     public List<Thread> listThreads(int boardId) {
         List<Thread> threads = threadMapper.listThreads(boardId);
         for (Thread thread : threads) {

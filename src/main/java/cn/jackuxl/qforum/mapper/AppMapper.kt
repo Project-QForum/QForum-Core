@@ -19,6 +19,6 @@ interface AppMapper {
     @Select("select * from qf_app where packageName=#{param1};")
     fun getAppByPackageName(packageName:String): App?
 
-    @Select("select * from qf_app order by id desc")
+    @Select("select * from qf_app order by id asc")
     fun listApps(): List<App>
 }

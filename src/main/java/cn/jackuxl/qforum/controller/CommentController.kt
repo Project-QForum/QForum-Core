@@ -2,6 +2,7 @@ package cn.jackuxl.qforum.controller
 
 import cn.dev33.satoken.stp.StpUtil
 import cn.jackuxl.qforum.constants.StaticProperty
+import cn.jackuxl.qforum.constants.e.Code
 import cn.jackuxl.qforum.entity.Comment
 import cn.jackuxl.qforum.model.Result
 import cn.jackuxl.qforum.model.ResultEntity
@@ -109,5 +110,28 @@ class CommentController {
         }
         return Result.ok(StaticProperty.SUCCESS, data)
     }
+
+    @RequestMapping(value = ["up"], produces = ["application/json;charset=UTF-8"])
+    fun upComment(commentId: Int, up: Int): ResultEntity<String?> {
+        BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER)
+        BasicUtil.assertTool(
+            commentService.getCommentById(commentId) != null,
+            StaticProperty.NO_SUCH_COMMENT
+        )
+        val comment = commentService.getCommentById(commentId)
+        BasicUtil.assertTool(
+            comment?.threadId?.let { threadService.getThreadById(it)?.publisherId } == StpUtil.getLoginIdAsInt() || StpUtil.hasRole(
+                "admin"
+            ),
+            StaticProperty.PERMISSION_DENIED
+        )
+        when (up) {
+            0 -> BasicUtil.assertTool(commentService.upComment(commentId, 0) > 0, StaticProperty.UNKNOWN)
+            1 -> BasicUtil.assertTool(commentService.upComment(commentId, 1) > 0, StaticProperty.UNKNOWN)
+            else -> return Result.failed(Code.ILLEGAL_PARAMETER, StaticProperty.ILLEGAL_PARAMETER)
+        }
+        return Result.ok(StaticProperty.SUCCESS)
+    }
+
 
 }

@@ -128,9 +128,11 @@ public class UserController {
     }
 
     @RequestMapping(value = "checkLogin")
-    public ResultEntity<String> checkLogin() {
+    public ResultEntity<UserVo> checkLogin() {
         BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER);
-        return Result.INSTANCE.ok(StaticProperty.SUCCESS);
+        UserVo data = new UserVo();
+        BeanUtils.copyProperties(userService.getUserById(StpUtil.getLoginIdAsInt()), data);
+        return Result.INSTANCE.ok(StaticProperty.SUCCESS, data);
     }
 
     @RequestMapping(value = "getProfile")

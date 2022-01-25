@@ -11,6 +11,8 @@ public interface ThreadService {
 
     Thread getThreadById(int id);
 
+    int deleteThreadById(int id);
+
     List<Thread> listThreads(int boardId);
 
     int likeThread(int tid, int uid);

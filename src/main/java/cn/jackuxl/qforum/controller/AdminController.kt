@@ -26,7 +26,7 @@ class AdminController {
 
     fun checkPermission() {
         BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER)
-        BasicUtil.assertTool(StpUtil.hasRole("admin"), StaticProperty.NO_SUCH_ADMIN)
+        BasicUtil.assertTool(StpUtil.hasRole("admin"), StaticProperty.PERMISSION_DENIED)
     }
 
     @RequestMapping(value = ["addBoard"])

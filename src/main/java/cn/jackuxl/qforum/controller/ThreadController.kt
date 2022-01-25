@@ -32,7 +32,7 @@ class ThreadController {
     @Autowired
     lateinit var boardService: BoardServiceImpl
 
-    @RequestMapping(value = ["post"], produces = ["application/json;charset=UTF-8"])
+    @RequestMapping(value = ["post"])
     fun postThread(thread: Thread): ResultEntity<ThreadVo> {
         BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER)
 
@@ -56,7 +56,7 @@ class ThreadController {
         return Result.ok(StaticProperty.SUCCESS, data)
     }
 
-    @RequestMapping(value = ["getThreadDetail"], produces = ["application/json;charset=UTF-8"])
+    @RequestMapping(value = ["getThreadDetail"])
     fun getThreadDetail(id: Int): ResultEntity<ThreadVo> {
         val thread = threadService.getThreadById(id)
         BasicUtil.assertTool(thread != null, StaticProperty.NO_SUCH_THREAD)
@@ -73,7 +73,7 @@ class ThreadController {
         return Result.ok(StaticProperty.SUCCESS, data)
     }
 
-    @RequestMapping(value = ["list"], produces = ["application/json;charset=UTF-8"])
+    @RequestMapping(value = ["list"])
     fun listThreads(boardId: Int?): ResultEntity<MutableList<ThreadVo>> {
         BasicUtil.assertTool(boardService.getBoardById(boardId ?: 0) != null, StaticProperty.NO_SUCH_BOARD)
 
@@ -91,10 +91,23 @@ class ThreadController {
         return Result.ok(StaticProperty.SUCCESS, data)
     }
 
+    @RequestMapping(value = ["delete"])
+    fun deleteThread(id: Int): ResultEntity<String?>? {
+        BasicUtil.assertTool(threadService.getThreadById(id) != null, StaticProperty.NO_SUCH_THREAD)
+        BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER)
+        BasicUtil.assertTool(
+            threadService.getThreadById(id).publisherId == StpUtil.getLoginIdAsInt() || StpUtil.hasRole(
+                "admin"
+            ), StaticProperty.PERMISSION_DENIED
+        )
+        BasicUtil.assertTool(threadService.deleteThreadById(id) > 0, StaticProperty.UNKNOWN)
+        return Result.ok(StaticProperty.SUCCESS)
+    }
+
     val LIKE = 0
     val DISLIKE = 1
 
-    @RequestMapping(value = ["like"], produces = ["application/json;charset=UTF-8"])
+    @RequestMapping(value = ["like"])
     fun likeThread(@NonNull type: Int, @NonNull tid: Int): ResultEntity<String?> {
         BasicUtil.assertTool(StpUtil.isLogin(), StaticProperty.NO_SUCH_USER)
 

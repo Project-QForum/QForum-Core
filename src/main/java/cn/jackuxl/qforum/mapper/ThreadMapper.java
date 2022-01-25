@@ -1,6 +1,7 @@
 package cn.jackuxl.qforum.mapper;
 
 import cn.jackuxl.qforum.entity.Thread;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -15,6 +16,9 @@ public interface ThreadMapper {
 
     @Select("select * from qf_thread where id=#{param1};")
     Thread getThreadById(int id);
+
+    @Delete("delete from qf_thread where id=#{param1};")
+    int deleteThreadById(int id);
 
     @Select("select * from qf_thread where boardId=#{param1};")
     List<Thread> listThreads(int boardId);

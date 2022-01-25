@@ -15,6 +15,6 @@ public interface BoardMapper {
     @Select("select * from qf_board where id=#{param1};")
     Board getBoardById(int id);
 
-    @Select("select * from qf_board order by priorityLevel desc")
+    @Select("select * from qf_board order by priorityLevel asc")
     List<Board> listBoards();
 }
