@@ -23,4 +23,4 @@ You can use its API to make forum clients, front-end pages, or other programs.
 ### Features
 
 - Open source and free, so you don't need to worry about its security.
-- Developed by the official and maintained for a long time.。
+- Developed by the official and maintained for a long time.
